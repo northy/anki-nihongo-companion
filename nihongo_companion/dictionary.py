@@ -60,7 +60,7 @@ class NihongoMaster(WebDict) :
                     #print(result)
                     return_results.append({
                         "title": result.find("h2").text,
-                        "kana": result.find("h3").text,
+                        "kana": result.find("h3").text if result.find("h3")!=None else result.find("h2").text, #may not have kana
                         "type": result.find("dt").text,
                         "english": list(map(lambda x : x.text, result.find_all("li"))),
                         "uri": result.find("a", href=True)["href"]

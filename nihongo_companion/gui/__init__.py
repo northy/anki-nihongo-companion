@@ -64,6 +64,10 @@ class SelectWord(aqt.QDialog) :
     def __search(self) -> None :
         query = self.note.values()[self.ui.cbField_in.currentIndex()]
 
+        self.ui.listResults.setEnabled(False)
+        self.ui.bConfirm.setEnabled(False)
+        self.ui.listResults.clear()
+
         self.ui.pbSearch.setValue(50)
 
         self.searchResults = self.dictionary.search(query)
@@ -83,6 +87,7 @@ class SelectWord(aqt.QDialog) :
             self.ui.listResults.setEnabled(True)
             self.ui.bConfirm.setEnabled(True)
         else :
+            self.ui.pbSearch.setValue(0)
             aqt.utils.showInfo("Nothing found!")
 
     def __cancel(self) -> None :
