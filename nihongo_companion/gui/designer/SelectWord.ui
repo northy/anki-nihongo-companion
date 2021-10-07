@@ -105,6 +105,9 @@
      <height>281</height>
     </rect>
    </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QProgressBar" name="pbSearch">
    <property name="geometry">

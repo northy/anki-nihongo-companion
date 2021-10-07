@@ -122,6 +122,7 @@ class SelectExamples(aqt.QDialog) :
         self.queryWord = queryWord
         self.searchResults = None
         self.selected = None
+        self.error = False
         self.field = None
         self.note = note
 
@@ -141,8 +142,6 @@ class SelectExamples(aqt.QDialog) :
     
     def __resizeHeaders(self) -> None:
         #TODO: Wrap text
-        self.ui.tExamples.verticalHeader().hide()
-
         header = self.ui.tExamples.horizontalHeader()
         header.setSectionResizeMode(aqt.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(0, aqt.QHeaderView.Stretch)
@@ -169,9 +168,10 @@ class SelectExamples(aqt.QDialog) :
             self.ui.pbSearch.setValue(100)
             self.ui.tExamples.setEnabled(True)
             self.ui.bConfirm.setEnabled(True)
+            self.ui.tExamples.resizeRowsToContents()
         else :
             aqt.utils.showInfo("Nothing found!")
-            self.__cancel()
+            self.error = True
 
     def __cancel(self) -> None :
         self.close()

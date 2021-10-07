@@ -26,7 +26,7 @@
    <enum>Qt::PreventContextMenu</enum>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Nihongo Companion</string>
   </property>
   <widget class="QProgressBar" name="pbSearch">
    <property name="geometry">
@@ -56,6 +56,9 @@
      <height>311</height>
     </rect>
    </property>
+   <attribute name="verticalHeaderVisible">
+    <bool>false</bool>
+   </attribute>
    <column>
     <property name="text">
      <string>Japanese</string>

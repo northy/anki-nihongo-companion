@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\SelectWord.ui'
+# Form implementation generated from reading ui file '.\designer\SelectWord.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -37,6 +37,7 @@ class Ui_diagSelectWord(object):
         self.listResults = QtWidgets.QListWidget(diagSelectWord)
         self.listResults.setEnabled(False)
         self.listResults.setGeometry(QtCore.QRect(10, 70, 581, 281))
+        self.listResults.setWordWrap(True)
         self.listResults.setObjectName("listResults")
         self.pbSearch = QtWidgets.QProgressBar(diagSelectWord)
         self.pbSearch.setGeometry(QtCore.QRect(10, 40, 581, 23))

@@ -39,30 +39,23 @@ def registerMenu() -> None :
         menu = QtWidgets.QMenu("Nihongo companion", browser.form.menubar)
         browser.form.menubar.addMenu(menu)
 
-        """def addExampleSentencesToSelected() -> None:
-            for note_id in browser.selectedNotes() :
-                note = browser.mw.col.getNote(note_id)
-                note["Example"] = "Test"
-                note.flush()
-                #aqt.mw.col.update_note(note)"""
-
         def addExampleSentencesToSelected() -> None :
-            #cardCount = len(browser.selectedNotes())
-            #aqt.utils.showInfo(browser.mw.col.getNote(browser.selectedNotes()[0]).__str__())
             d = dictionary.NihongoMaster()
+            endIt = False
             for note_id in browser.selectedNotes() :
+                if endIt : break
                 #TODO: open any card's preview
                 note = browser.mw.col.getNote(note_id)
-                wSelection = gui.SelectWord(browser, d, note)
-                if wSelection.exec_() == QtWidgets.QDialog.Accepted :
-                    wExamples = gui.SelectExamples(browser, d, wSelection.searchResults[wSelection.selected], note)
-                    if wExamples.exec_() == QtWidgets.QDialog.Accepted :
-                        #aqt.utils.showInfo('\n'.join(map(lambda x : wExamples.searchResults[x].__str__(), wExamples.selected)))
-                        notes.update(browser, note, wExamples.field, map(lambda x : wExamples.searchResults[x], wExamples.selected))
+                while True : #Run until select word is cancelled or skipped
+                    wSelection = gui.SelectWord(browser, d, note)
+                    if wSelection.exec_() == QtWidgets.QDialog.Accepted :
+                        wExamples = gui.SelectExamples(browser, d, wSelection.searchResults[wSelection.selected], note)
+                        if not(wExamples.error) and wExamples.exec_() == QtWidgets.QDialog.Accepted :
+                            notes.update(browser, note, wExamples.field, map(lambda x : wExamples.searchResults[x], wExamples.selected))
+                            break
                     else :
-                        pass
-                else :
-                    if not(wSelection.skipped) : break
+                        if not(wSelection.skipped) : endIt = True
+                        break
         
         action = aqt.qt.QAction("Add example sentences to selected...", menu)
         aqt.qconnect(action.triggered, addExampleSentencesToSelected)

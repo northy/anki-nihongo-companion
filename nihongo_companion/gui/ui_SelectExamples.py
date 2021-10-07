@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\SelectExamples.ui'
+# Form implementation generated from reading ui file '.\designer\SelectExamples.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -33,6 +33,7 @@ class Ui_diagSelectExamples(object):
         self.tExamples.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
         self.tExamples.setHorizontalHeaderItem(1, item)
+        self.tExamples.verticalHeader().setVisible(False)
         self.cbField_out = QtWidgets.QComboBox(diagSelectExamples)
         self.cbField_out.setGeometry(QtCore.QRect(130, 360, 261, 22))
         self.cbField_out.setObjectName("cbField_out")
@@ -52,7 +53,7 @@ class Ui_diagSelectExamples(object):
 
     def retranslateUi(self, diagSelectExamples):
         _translate = QtCore.QCoreApplication.translate
-        diagSelectExamples.setWindowTitle(_translate("diagSelectExamples", "Dialog"))
+        diagSelectExamples.setWindowTitle(_translate("diagSelectExamples", "Nihongo Companion"))
         item = self.tExamples.horizontalHeaderItem(0)
         item.setText(_translate("diagSelectExamples", "Japanese"))
         item = self.tExamples.horizontalHeaderItem(1)
