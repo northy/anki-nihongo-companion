@@ -46,28 +46,26 @@ def registerMenu() -> None :
                 if endIt : break
                 note = browser.mw.col.getNote(note_id)
 
+                #Open any card's preview
+                #TODO: make it so that the preview is interactable
+                browser.card = note.cards()[0]
+                browser.singleCard = note.cards()[0]
+                browser._previewer = aqt.browser.PreviewDialog(browser, browser.mw, lambda : None)
+                #The following line is an ammend, removed if selection is opened in a non-blocking manner
+                browser._previewer.setWindowFlags(browser._previewer.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
+                browser._previewer.open()
+
                 while True : #Run until select word is cancelled or skipped
                     wSelection = gui.SelectWord(browser, d, note)
-                    
-                    #Open any card's preview
-                    #TODO: make it so that the preview is interactable
-                    browser.card = note.cards()[0]
-                    browser.singleCard = note.cards()[0]
-                    browser._previewer = aqt.browser.PreviewDialog(browser, browser.mw, lambda : None)
-                    #The following line is an ammend, removed if selection is opened in a non-blocking manner
-                    browser._previewer.setWindowFlags(browser._previewer.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
-                    browser._previewer.open()
-
                     if wSelection.exec_() == QtWidgets.QDialog.Accepted :
                         wExamples = gui.SelectExamples(browser, d, wSelection.searchResults[wSelection.selected], note)
                         if not(wExamples.error) and wExamples.exec_() == QtWidgets.QDialog.Accepted :
                             notes.update(browser, note, wExamples.field, [wExamples.searchResults[x] for x in wExamples.selected], wSelection.searchResults[wSelection.selected])
-                            browser._previewer.close()
                             break
                     else :
                         if not(wSelection.skipped) : endIt = True
-                        browser._previewer.close()
                         break
+                browser._previewer.close()
                 
         action = aqt.qt.QAction("Add example sentences to selected...", menu)
         aqt.qconnect(action.triggered, addExampleSentencesToSelected)
