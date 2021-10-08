@@ -43,8 +43,7 @@ class WebDict(Dict) :
             soup.prettify()
             return soup
         else :
-            print("error")
-            exit(1)
+            return None
 
 class NihongoMaster(WebDict) :
     def search(self, query) :
@@ -54,19 +53,17 @@ class NihongoMaster(WebDict) :
         page = 1
         while True : #page
             soup = self.__urlGet__(f"https://nihongomaster.com/japanese/dictionary/search?type=j&q={query}&p={str(page)}")
+            if soup==None : return None
             results = soup.find("div", class_="results")
-            if results!=None :
-                for result in results.find_all("div") :
-                    #print(result)
-                    return_results.append({
-                        "title": result.find("h2").text,
-                        "kana": result.find("h3").text if result.find("h3")!=None else result.find("h2").text, #may not have kana
-                        "type": result.find("dt").text,
-                        "english": list(map(lambda x : x.text, result.find_all("li"))),
-                        "uri": result.find("a", href=True)["href"]
-                    })
-            else :
-                return None
+            if results==None : return None
+            for result in results.find_all("div") :
+                return_results.append({
+                    "title": result.find("h2").text,
+                    "kana": result.find("h3").text if result.find("h3")!=None else result.find("h2").text, #may not have kana
+                    "type": result.find("dt").text,
+                    "english": list(map(lambda x : x.text, result.find_all("li"))),
+                    "uri": result.find("a", href=True)["href"]
+                })
 
             count = soup.find("h1", class_='text-lg md:text-2xl xl:text-4xl font-bold text-center md:text-left mt-4').text.strip().split()
             cur,tot = int(count[4]), int(count[6])
@@ -79,18 +76,16 @@ class NihongoMaster(WebDict) :
         return_results = []
 
         soup = self.__urlGet__(uri)
+        if soup==None : return None
         results = soup.find("div", id="examples")
-        if results!=None :
-            try :
-                for result in results.find("div", class_="w-full").find_all("div", class_="flex") :
-                    #print(result)
-                        return_results.append({
-                            "japanese": ''.join(map(lambda x : x.strip(),result.find("div", class_="p-2 font-bold").find_all(text=True))),
-                            "english": result.find_all("div")[1].text.strip()
-                        })
-            except :
-                return None
-        else :
+        if results==None : return None
+        try :
+            for result in results.find("div", class_="w-full").find_all("div", class_="flex") :
+                return_results.append({
+                    "japanese": ''.join(map(lambda x : x.strip(),result.find("div", class_="p-2 font-bold").find_all(text=True))),
+                    "english": result.find_all("div")[1].text.strip()
+                })
+        except :
             return None
         
         return return_results

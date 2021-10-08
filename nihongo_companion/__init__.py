@@ -65,7 +65,11 @@ def registerMenu() -> None :
                     else :
                         if not(wSelection.skipped) : endIt = True
                         break
-                browser._previewer.close()
+                try :
+                    browser._previewer.close()
+                except : pass
+                browser._previewer=None
+            browser.mw.reset()
                 
         action = aqt.qt.QAction("Add example sentences to selected...", menu)
         aqt.qconnect(action.triggered, addExampleSentencesToSelected)

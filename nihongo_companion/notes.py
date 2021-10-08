@@ -50,4 +50,3 @@ def update(browser, note, field, sentences, entry) :
 
     #update the menu
     note.flush()
-    browser.mw.reset()
