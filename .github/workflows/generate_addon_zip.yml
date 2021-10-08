@@ -10,17 +10,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Zip files
-        uses: papeloto/action-zip@v1
-        with:
-          files: |
-            __init__.py
-            nihongo_companion/*
-            nihongo_companion/gui/*
-          recursive: false
-          dest: anki-nihongo-companion.zip
-      - name: Archive as artifact
+      - name: Zip and as artifact
         uses: actions/upload-artifact@v2
         with:
-          name: addon
-          path: anki-nihongo-companion.zip
+          name: anki-nihongo-companion
+          path: |
+            **/*.py
+            LICENSE
