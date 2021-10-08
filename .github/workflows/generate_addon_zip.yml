@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Zip and as artifact
+      - name: Zip and add artifact
         uses: actions/upload-artifact@v2
         with:
           name: anki-nihongo-companion
