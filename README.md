@@ -51,7 +51,6 @@ Upon clicking "Confirm", the selected field will get filled with the selected ex
 **IMPORTANT**: As of yet, undo operations are not supported, so make sure to select the correct output field.
 
 ### TODO:
-- Open card preview when searching
 - Remember last choice on field dropdowns
 - Highlight conjugated words
 - Better search progress bars

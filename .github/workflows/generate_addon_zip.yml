@@ -1,4 +1,4 @@
-name: Generate Addon Zip
+name: Generate addon zip
 
 on:
   push:
