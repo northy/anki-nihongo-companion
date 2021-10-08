@@ -24,13 +24,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-def update(browser, note, field, sentences) :
+#TODO: make settings screen
+highlight = True
+highlight_color = "#DF362D"
+
+import aqt
+
+def update(browser, note, field, sentences, entry) :
     """update note's field adding sentences"""
     
-    #TODO: highlight desired word
+    #TODO: improve taking conjugations
+    if highlight :
+        highlight_html = '<span style="color:{0};">{1}</span>'
+
+        highlight_words = set(entry["title"].split(', '))
+        highlight_words.add(entry["kana"])
+
+        for word in highlight_words :
+            for s in sentences :
+                s["japanese"] = s["japanese"].replace(word, highlight_html.format(highlight_color, word))
+    
     html = "<p>{0}<br>{1}</p>"
     
     note[field] = "\n<hr>\n".join(map(lambda example : html.format(example["japanese"],example["english"]), sentences))
 
+    #update the menu
     note.flush()
     browser.mw.reset()

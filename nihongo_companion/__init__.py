@@ -51,7 +51,7 @@ def registerMenu() -> None :
                     if wSelection.exec_() == QtWidgets.QDialog.Accepted :
                         wExamples = gui.SelectExamples(browser, d, wSelection.searchResults[wSelection.selected], note)
                         if not(wExamples.error) and wExamples.exec_() == QtWidgets.QDialog.Accepted :
-                            notes.update(browser, note, wExamples.field, map(lambda x : wExamples.searchResults[x], wExamples.selected))
+                            notes.update(browser, note, wExamples.field, [wExamples.searchResults[x] for x in wExamples.selected], wSelection.searchResults[wSelection.selected])
                             break
                     else :
                         if not(wSelection.skipped) : endIt = True

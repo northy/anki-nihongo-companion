@@ -53,4 +53,5 @@ Upon clicking "Confirm", the selected field will get filled with the selected ex
 ### TODO:
 - Open card preview when searching
 - Remember last choice on field dropdowns
-- Highlight searched word on sentences' HTML
+- Highlight conjugated words
+- Better search progress bars
