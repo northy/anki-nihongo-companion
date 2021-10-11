@@ -32,7 +32,7 @@ from .. import dictionary
 class SelectWord(aqt.QDialog) :
     """Select which word from a dictionary query to use"""
 
-    def __init__(self, parent, dictionary:dictionary.Dict, note) :
+    def __init__(self, parent, dictionary:dictionary.Dict, note, internal_config) :
         #init window
         super(SelectWord,self).__init__(parent)
         self.setWindowFlags(aqt.Qt.Dialog | aqt.Qt.MSWindowsFixedSizeDialogHint)
@@ -47,8 +47,10 @@ class SelectWord(aqt.QDialog) :
         self.selected = None
         self.skipped = False
         self.note = note
+        self.internal_config = internal_config
 
         self.__updateDropdowns()
+        self.ui.cbField_in.setCurrentIndex(self.internal_config["in_field"])
 
         #hooks
         self.ui.bSearch.clicked.connect(self.__search)
@@ -98,6 +100,7 @@ class SelectWord(aqt.QDialog) :
             aqt.util.showInfo("No word selected!")
             return
         self.selected = self.ui.listResults.selectedIndexes()[0].row()
+        self.internal_config["in_field"] = self.ui.cbField_in.currentIndex()
         self.accept()
     
     def __skip(self) -> None :
@@ -107,7 +110,7 @@ class SelectWord(aqt.QDialog) :
 class SelectExamples(aqt.QDialog) :
     """Select which examples from a dictionary query to use"""
 
-    def __init__(self, parent, dictionary:dictionary.Dict, queryWord:dict, note) :
+    def __init__(self, parent, dictionary:dictionary.Dict, queryWord:dict, note, internal_config) :
         #init window
         super(SelectExamples,self).__init__(parent)
         self.setWindowFlags(aqt.Qt.Dialog | aqt.Qt.MSWindowsFixedSizeDialogHint)
@@ -120,6 +123,7 @@ class SelectExamples(aqt.QDialog) :
         #data and methods
         self.dictionary = dictionary
         self.queryWord = queryWord
+        self.internal_config = internal_config
         self.searchResults = None
         self.selected = None
         self.error = False
@@ -127,6 +131,7 @@ class SelectExamples(aqt.QDialog) :
         self.note = note
 
         self.__updateDropdowns()
+        self.ui.cbField_out.setCurrentIndex(self.internal_config["out_field"])
 
         #hooks
         self.ui.bCancel.clicked.connect(self.__cancel)
@@ -182,4 +187,5 @@ class SelectExamples(aqt.QDialog) :
             return
         self.field = self.note.keys()[self.ui.cbField_out.currentIndex()]
         self.selected = list(sorted(set(map(lambda index : index.row(), self.ui.tExamples.selectedIndexes()))))
+        self.internal_config["out_field"] = self.ui.cbField_out.currentIndex()
         self.accept()

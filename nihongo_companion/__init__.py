@@ -42,9 +42,15 @@ def registerMenu() -> None :
         def addExampleSentencesToSelected() -> None :
             d = dictionary.NihongoMaster()
             endIt = False
+
+            i = 0
+            cards_N = len(browser.selectedNotes())
+            internal_config = {"in_field":0, "out_field":0}
+
             for note_id in browser.selectedNotes() :
                 if endIt : break
                 note = browser.mw.col.getNote(note_id)
+                i+=1
 
                 #Open any card's preview
                 #TODO: make it so that the preview is interactable
@@ -56,9 +62,11 @@ def registerMenu() -> None :
                 browser._previewer.open()
 
                 while True : #Run until select word is cancelled or skipped
-                    wSelection = gui.SelectWord(browser, d, note)
+                    wSelection = gui.SelectWord(browser, d, note, internal_config)
+                    wSelection.setWindowTitle(wSelection.windowTitle()+' ({0}/{1})'.format(i, cards_N))
                     if wSelection.exec_() == QtWidgets.QDialog.Accepted :
-                        wExamples = gui.SelectExamples(browser, d, wSelection.searchResults[wSelection.selected], note)
+                        wExamples = gui.SelectExamples(browser, d, wSelection.searchResults[wSelection.selected], note, internal_config)
+                        wExamples.setWindowTitle(wExamples.windowTitle()+' ({0}/{1})'.format(i, cards_N))
                         if not(wExamples.error) and wExamples.exec_() == QtWidgets.QDialog.Accepted :
                             notes.update(browser, note, wExamples.field, [wExamples.searchResults[x] for x in wExamples.selected], wSelection.searchResults[wSelection.selected])
                             break

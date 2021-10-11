@@ -10,7 +10,7 @@ If you like it, please leave a positive review on the anki addon page!
 
 ### Install the addon
 
-Open anki, go to the Tools menu and then Add-ons>Browse & Install to paste in the code: `1946501448`.
+Open anki, go to the Tools menu and then Add-ons>Browse & Install to paste in the code: `1946501448`. After Anki finishes installing the addon, restart it for changes to take effect.
 
 ### Add a field for examples
 
@@ -51,6 +51,6 @@ Upon clicking "Confirm", the selected field will get filled with the selected ex
 **IMPORTANT**: As of yet, undo operations are not supported, so make sure to select the correct output field.
 
 ### TODO:
-- Remember last choice on field dropdowns
+
 - Highlight conjugated words
 - Better search progress bars
