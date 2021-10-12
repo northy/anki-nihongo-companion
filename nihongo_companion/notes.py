@@ -38,7 +38,7 @@ def update(browser, note, field, sentences, entry) :
         highlight_html = '<span style="color:{0};">{1}</span>'
 
         highlight_words = set(entry["title"].split(', '))
-        highlight_words.add(entry["kana"])
+        for x in entry["kana"].split(', ') : highlight_words.add(x)
 
         for word in highlight_words :
             for s in sentences :
