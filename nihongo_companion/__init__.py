@@ -73,14 +73,18 @@ def registerMenu() -> None :
                         wExamples = gui.SelectExamples(browser, d, wSelection.searchResults[wSelection.selected], note, internal_config)
                         wExamples.setWindowTitle(wExamples.windowTitle()+' ({0}/{1})'.format(i, cards_N))
                         wExamples.show()
+                        wExamples.search()
                         if not(wExamples.error) and wExamples.exec_() == QtWidgets.QDialog.Accepted :
                             notes.update(browser, note, wExamples.field, [wExamples.searchResults[x] for x in wExamples.selected], wSelection.searchResults[wSelection.selected])
                             break
+                        else :
+                            if wExamples.error :
+                                wExamples.close()
+                                aqt.utils.showInfo("Nothing found!")
                     else :
                         if not(wSelection.skipped) : endIt = True
                         break
-                try :
-                    browser._previewer.close()
+                try : browser._previewer.close()
                 except : pass
                 browser._previewer=None
             browser.mw.reset()

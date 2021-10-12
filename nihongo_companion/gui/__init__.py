@@ -38,10 +38,6 @@ class SelectWord(aqt.QDialog) :
         super(SelectWord,self).__init__(parent)
         self.setWindowFlags(aqt.Qt.Dialog | aqt.Qt.MSWindowsFixedSizeDialogHint)
 
-        #setup UI
-        self.ui = ui_SelectWord.Ui_diagSelectWord()
-        self.ui.setupUi(self)
-
         #data and methods
         self.closed = False
         self.dictionary = dictionary
@@ -50,25 +46,40 @@ class SelectWord(aqt.QDialog) :
         self.skipped = False
         self.note = note
         self.internal_config = internal_config
+        self.searchThread = None
 
+        #setup UI
+        self.ui = ui_SelectWord.Ui_diagSelectWord()
+        self.ui.setupUi(self)
+        self.ui.pbSearch.setHidden(True)
         self.__updateDropdowns()
         self.ui.cbField_in.setCurrentIndex(self.internal_config["in_field"])
 
         #hooks
-        self.ui.bSearch.clicked.connect(lambda : threading.Thread(target=self.__search, daemon=True).start())
+        self.ui.bSearch.clicked.connect(self.startSearch)
         self.ui.bCancel.clicked.connect(self.__cancel)
         self.ui.bSkip.clicked.connect(self.__skip)
         self.ui.bConfirm.clicked.connect(self.__confirm)
         self.ui.listResults.doubleClicked.connect(self.__confirm)
-        quit = aqt.QAction("Quit", self)
-        quit.triggered.connect(self.__cancel)
 
         #begin search
-        if self.internal_config["auto_search"] : threading.Thread(target=self.__search, daemon=True).start()
+        if self.internal_config["auto_search"] : self.startSearch()
 
     def __updateDropdowns(self) -> None :
         for field,_ in self.note.items() :
             self.ui.cbField_in.addItem(field)
+    
+    def startSearch(self) -> None :
+        self.searchThread = threading.Thread(target=self.__search, daemon=True)
+        self.searchThread.start()
+    
+    def terminateSearch(self) -> None :
+        self.waitSearch()
+
+    def waitSearch(self) -> None :
+        try :
+            self.searchThread.join()
+        except : pass
 
     def __search(self) -> None :
         self.ui.bSearch.setEnabled(False)
@@ -79,14 +90,15 @@ class SelectWord(aqt.QDialog) :
         self.ui.bConfirm.setEnabled(False)
         self.ui.listResults.clear()
 
-        self.ui.pbSearch.setValue(5)
+        self.ui.pbSearch.setValue(0)
+        self.ui.pbSearch.setHidden(False)
 
         gen = self.dictionary.search(query)
         self.searchResults = []
 
         for results, cur, tot in gen :
             if self.closed : return
-            if results!=None and len(results)>0 :
+            elif results!=None and len(results)>0 :
                 self.ui.pbSearch.setValue(100*cur//tot)
                 self.searchResults += results
                 for result in results :
@@ -104,12 +116,17 @@ class SelectWord(aqt.QDialog) :
                 self.searchResults = None
                 self.ui.pbSearch.setValue(0)
                 self.ui.bSearch.setEnabled(True)
+                self.ui.pbSearch.setHidden(True)
                 aqt.utils.showInfo("Nothing found!")
                 return
         
         self.ui.listResults.setEnabled(True)
         self.ui.bConfirm.setEnabled(True)
         self.ui.bSearch.setEnabled(True)
+    
+    def closeEvent(self, a0) -> None:
+        self.waitSearch()
+        return super().closeEvent(a0)
 
     def __cancel(self) -> None :
         self.closed = True
@@ -126,7 +143,7 @@ class SelectWord(aqt.QDialog) :
     
     def __skip(self) -> None :
         self.skipped = True
-        self.close()
+        self.__cancel()
 
 class SelectExamples(aqt.QDialog) :
     """Select which examples from a dictionary query to use"""
@@ -135,11 +152,6 @@ class SelectExamples(aqt.QDialog) :
         #init window
         super(SelectExamples,self).__init__(parent)
         self.setWindowFlags(aqt.Qt.Dialog | aqt.Qt.MSWindowsFixedSizeDialogHint)
-
-        #setup UI
-        self.ui = ui_SelectExamples.Ui_diagSelectExamples()
-        self.ui.setupUi(self)
-        self.__resizeHeaders()
 
         #data and methods
         self.closed = False
@@ -152,6 +164,10 @@ class SelectExamples(aqt.QDialog) :
         self.field = None
         self.note = note
 
+        #setup UI
+        self.ui = ui_SelectExamples.Ui_diagSelectExamples()
+        self.ui.setupUi(self)
+        self.__resizeHeaders()
         self.__updateDropdowns()
         self.ui.cbField_out.setCurrentIndex(self.internal_config["out_field"])
 
@@ -160,9 +176,6 @@ class SelectExamples(aqt.QDialog) :
         self.ui.bConfirm.clicked.connect(self.__confirm)
         quit = aqt.QAction("Quit", self)
         quit.triggered.connect(self.__cancel)
-
-        #begin search
-        threading.Thread(target=self.__search, daemon=True).start()
     
     def __updateDropdowns(self) -> None :
         #TODO: Remember last choice
@@ -178,7 +191,7 @@ class SelectExamples(aqt.QDialog) :
 
         self.ui.tExamples.setSelectionBehavior(aqt.QAbstractItemView.SelectRows)
 
-    def __search(self) -> None :
+    def search(self) -> None :
         self.ui.pbSearch.setValue(50)
 
         self.searchResults = self.dictionary.get_examples(self.queryWord['uri'])
@@ -200,7 +213,6 @@ class SelectExamples(aqt.QDialog) :
             self.ui.bConfirm.setEnabled(True)
             self.ui.tExamples.resizeRowsToContents()
         else :
-            aqt.utils.showInfo("Nothing found!")
             self.error = True
 
     def __cancel(self) -> None :
@@ -209,7 +221,7 @@ class SelectExamples(aqt.QDialog) :
     
     def __confirm(self) -> None :
         if len(self.ui.tExamples.selectedIndexes())==0 :
-            aqt.util.showInfo("No example selected!")
+            aqt.utils.showInfo("No example selected!")
             return
         self.field = self.note.keys()[self.ui.cbField_out.currentIndex()]
         self.selected = list(sorted(set(map(lambda index : index.row(), self.ui.tExamples.selectedIndexes()))))
