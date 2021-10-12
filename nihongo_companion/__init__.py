@@ -70,6 +70,7 @@ def registerMenu() -> None :
                     wSelection.setWindowTitle(wSelection.windowTitle()+' ({0}/{1})'.format(i, cards_N))
                     wSelection.show()
                     if wSelection.exec_() == QtWidgets.QDialog.Accepted :
+                        wSelection.close()
                         wExamples = gui.SelectExamples(browser, d, wSelection.searchResults[wSelection.selected], note, internal_config)
                         wExamples.setWindowTitle(wExamples.windowTitle()+' ({0}/{1})'.format(i, cards_N))
                         wExamples.show()

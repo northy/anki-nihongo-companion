@@ -25,7 +25,6 @@ SOFTWARE.
 """
 
 import aqt
-import threading
 
 from . import ui_SelectWord, ui_SelectExamples
 from .. import dictionary
@@ -70,7 +69,9 @@ class SelectWord(aqt.QDialog) :
             self.ui.cbField_in.addItem(field)
     
     def startSearch(self) -> None :
-        self.searchThread = threading.Thread(target=self.__search, daemon=True)
+        self.searchThread = aqt.QThread(parent=self)
+        self.searchThread.started.connect(self.__search)
+        self.searchThread.finished.connect(self.searchThread.deleteLater)
         self.searchThread.start()
     
     def terminateSearch(self) -> None :
@@ -78,7 +79,8 @@ class SelectWord(aqt.QDialog) :
 
     def waitSearch(self) -> None :
         try :
-            self.searchThread.join()
+            self.searchThread.quit()
+            self.searchThread.wait()
         except : pass
 
     def __search(self) -> None :
@@ -112,6 +114,7 @@ class SelectWord(aqt.QDialog) :
                     if self.selected == None :
                         self.selected = 0
                         self.ui.listResults.setCurrentItem(item)
+                aqt.QApplication.processEvents() #update
             else :
                 self.searchResults = None
                 self.ui.pbSearch.setValue(0)
@@ -125,7 +128,7 @@ class SelectWord(aqt.QDialog) :
         self.ui.bSearch.setEnabled(True)
     
     def closeEvent(self, a0) -> None:
-        self.waitSearch()
+        self.terminateSearch()
         return super().closeEvent(a0)
 
     def __cancel(self) -> None :
@@ -207,6 +210,7 @@ class SelectExamples(aqt.QDialog) :
                 item.setText(example['english'])
                 self.ui.tExamples.setItem(i,1,item)
                 i+=1
+                aqt.QApplication.processEvents() #update
             self.ui.tExamples.selectRow(0)
             self.ui.pbSearch.setValue(100)
             self.ui.tExamples.setEnabled(True)
