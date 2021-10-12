@@ -45,7 +45,11 @@ def registerMenu() -> None :
 
             i = 0
             cards_N = len(browser.selectedNotes())
-            internal_config = {"in_field":0, "out_field":0}
+            internal_config = {
+                "in_field": 0,
+                "out_field": 0,
+                "auto_search": False
+            }
 
             for note_id in browser.selectedNotes() :
                 if endIt : break
@@ -58,15 +62,17 @@ def registerMenu() -> None :
                 browser.singleCard = note.cards()[0]
                 browser._previewer = aqt.browser.PreviewDialog(browser, browser.mw, lambda : None)
                 #The following line is an ammend, removed if selection is opened in a non-blocking manner
-                browser._previewer.setWindowFlags(browser._previewer.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
+                #browser._previewer.setWindowFlags(browser._previewer.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
                 browser._previewer.open()
 
                 while True : #Run until select word is cancelled or skipped
                     wSelection = gui.SelectWord(browser, d, note, internal_config)
                     wSelection.setWindowTitle(wSelection.windowTitle()+' ({0}/{1})'.format(i, cards_N))
+                    wSelection.show()
                     if wSelection.exec_() == QtWidgets.QDialog.Accepted :
                         wExamples = gui.SelectExamples(browser, d, wSelection.searchResults[wSelection.selected], note, internal_config)
                         wExamples.setWindowTitle(wExamples.windowTitle()+' ({0}/{1})'.format(i, cards_N))
+                        wExamples.show()
                         if not(wExamples.error) and wExamples.exec_() == QtWidgets.QDialog.Accepted :
                             notes.update(browser, note, wExamples.field, [wExamples.searchResults[x] for x in wExamples.selected], wSelection.searchResults[wSelection.selected])
                             break

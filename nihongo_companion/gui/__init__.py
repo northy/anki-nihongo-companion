@@ -25,6 +25,7 @@ SOFTWARE.
 """
 
 import aqt
+import threading
 
 from . import ui_SelectWord, ui_SelectExamples
 from .. import dictionary
@@ -42,6 +43,7 @@ class SelectWord(aqt.QDialog) :
         self.ui.setupUi(self)
 
         #data and methods
+        self.closed = False
         self.dictionary = dictionary
         self.searchResults = None
         self.selected = None
@@ -53,46 +55,64 @@ class SelectWord(aqt.QDialog) :
         self.ui.cbField_in.setCurrentIndex(self.internal_config["in_field"])
 
         #hooks
-        self.ui.bSearch.clicked.connect(self.__search)
+        self.ui.bSearch.clicked.connect(lambda : threading.Thread(target=self.__search, daemon=True).start())
         self.ui.bCancel.clicked.connect(self.__cancel)
         self.ui.bSkip.clicked.connect(self.__skip)
         self.ui.bConfirm.clicked.connect(self.__confirm)
         self.ui.listResults.doubleClicked.connect(self.__confirm)
+        quit = aqt.QAction("Quit", self)
+        quit.triggered.connect(self.__cancel)
+
+        #begin search
+        if self.internal_config["auto_search"] : threading.Thread(target=self.__search, daemon=True).start()
 
     def __updateDropdowns(self) -> None :
         for field,_ in self.note.items() :
             self.ui.cbField_in.addItem(field)
 
     def __search(self) -> None :
+        self.ui.bSearch.setEnabled(False)
+
         query = self.note.values()[self.ui.cbField_in.currentIndex()]
 
         self.ui.listResults.setEnabled(False)
         self.ui.bConfirm.setEnabled(False)
         self.ui.listResults.clear()
 
-        self.ui.pbSearch.setValue(50)
+        self.ui.pbSearch.setValue(5)
 
-        self.searchResults = self.dictionary.search(query)
-        if self.searchResults!=None and len(self.searchResults)>0 :
-            for result in self.searchResults :
-                item = aqt.QListWidgetItem()
-                item.setText(
-                    result["title"]+'\n'+
-                    result["kana"]+" ["+result["type"]+"]\n - "+
-                    "\n - ".join(result["english"])
-                )
-                self.ui.listResults.addItem(item)
-                if self.selected == None :
-                    self.selected = 0
-                    self.ui.listResults.setCurrentItem(item)
-            self.ui.pbSearch.setValue(100)
-            self.ui.listResults.setEnabled(True)
-            self.ui.bConfirm.setEnabled(True)
-        else :
-            self.ui.pbSearch.setValue(0)
-            aqt.utils.showInfo("Nothing found!")
+        gen = self.dictionary.search(query)
+        self.searchResults = []
+
+        for results, cur, tot in gen :
+            if self.closed : return
+            if results!=None and len(results)>0 :
+                self.ui.pbSearch.setValue(100*cur//tot)
+                self.searchResults += results
+                for result in results :
+                    item = aqt.QListWidgetItem()
+                    item.setText(
+                        result["title"]+'\n'+
+                        result["kana"]+" ["+result["type"]+"]\n - "+
+                        "\n - ".join(result["english"])
+                    )
+                    self.ui.listResults.addItem(item)
+                    if self.selected == None :
+                        self.selected = 0
+                        self.ui.listResults.setCurrentItem(item)
+            else :
+                self.searchResults = None
+                self.ui.pbSearch.setValue(0)
+                self.ui.bSearch.setEnabled(True)
+                aqt.utils.showInfo("Nothing found!")
+                return
+        
+        self.ui.listResults.setEnabled(True)
+        self.ui.bConfirm.setEnabled(True)
+        self.ui.bSearch.setEnabled(True)
 
     def __cancel(self) -> None :
+        self.closed = True
         self.close()
     
     def __confirm(self) -> None :
@@ -101,6 +121,7 @@ class SelectWord(aqt.QDialog) :
             return
         self.selected = self.ui.listResults.selectedIndexes()[0].row()
         self.internal_config["in_field"] = self.ui.cbField_in.currentIndex()
+        self.internal_config["auto_search"] = True
         self.accept()
     
     def __skip(self) -> None :
@@ -121,6 +142,7 @@ class SelectExamples(aqt.QDialog) :
         self.__resizeHeaders()
 
         #data and methods
+        self.closed = False
         self.dictionary = dictionary
         self.queryWord = queryWord
         self.internal_config = internal_config
@@ -136,9 +158,11 @@ class SelectExamples(aqt.QDialog) :
         #hooks
         self.ui.bCancel.clicked.connect(self.__cancel)
         self.ui.bConfirm.clicked.connect(self.__confirm)
+        quit = aqt.QAction("Quit", self)
+        quit.triggered.connect(self.__cancel)
 
         #begin search
-        self.__search()
+        threading.Thread(target=self.__search, daemon=True).start()
     
     def __updateDropdowns(self) -> None :
         #TODO: Remember last choice
@@ -159,6 +183,7 @@ class SelectExamples(aqt.QDialog) :
 
         self.searchResults = self.dictionary.get_examples(self.queryWord['uri'])
         if self.searchResults!=None and len(self.searchResults)>0 :
+            if self.closed : return
             self.ui.tExamples.setRowCount(len(self.searchResults))
             i = 0
             for example in self.searchResults :
@@ -179,6 +204,7 @@ class SelectExamples(aqt.QDialog) :
             self.error = True
 
     def __cancel(self) -> None :
+        self.closed = True
         self.close()
     
     def __confirm(self) -> None :

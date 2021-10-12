@@ -53,4 +53,4 @@ Upon clicking "Confirm", the selected field will get filled with the selected ex
 ### TODO:
 
 - Highlight conjugated words
-- Better search progress bars
+- Add new dictionaries

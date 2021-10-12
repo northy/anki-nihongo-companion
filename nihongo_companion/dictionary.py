@@ -28,11 +28,13 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote
 
+from typing import Generator, List
+
 class Dict(object) :
-    def search(self, query) :
+    def search(self, query:str) -> Generator[list,int,int] :
         pass
 
-    def get_examples(self, uri) :
+    def get_examples(self, uri:str) -> List[dict] :
         pass
 
 class WebDict(Dict) :
@@ -46,16 +48,16 @@ class WebDict(Dict) :
             return None
 
 class NihongoMaster(WebDict) :
-    def search(self, query) :
+    def search(self, query:str) -> Generator[list,int,int] :
         return_results = []
 
         query = quote(query)
         page = 1
         while True : #page
             soup = self.__urlGet__(f"https://nihongomaster.com/japanese/dictionary/search?type=j&q={query}&p={str(page)}")
-            if soup==None : return None
+            if soup==None : yield None, None, None; break
             results = soup.find("div", class_="results")
-            if results==None : return None
+            if results==None : yield None, None, None; break
             for result in results.find_all("div") :
                 return_results.append({
                     "title": result.find("h2").text,
@@ -67,12 +69,14 @@ class NihongoMaster(WebDict) :
 
             count = soup.find("h1", class_='text-lg md:text-2xl xl:text-4xl font-bold text-center md:text-left mt-4').text.strip().split()
             cur,tot = int(count[4]), int(count[6])
+
+            yield return_results, cur, tot
+            return_results.clear()
+
             if cur==tot : break
             page+=1
-        
-        return return_results
 
-    def get_examples(self, uri) :
+    def get_examples(self, uri:str) -> List[dict] :
         return_results = []
 
         soup = self.__urlGet__(uri)
