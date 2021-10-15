@@ -24,29 +24,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-#TODO: make settings screen
-highlight = True
-highlight_color = "#DF362D"
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import quote
 
-import aqt
+from typing import Generator, List
 
-def update(browser, note, field, sentences, entry) :
-    """update note's field adding sentences"""
-    
-    #TODO: improve taking conjugations
-    if highlight :
-        highlight_html = '<span style="color:{0};">{1}</span>'
+class Dict(object) :
+    needsSearch = True
 
-        highlight_words = set(entry["title"].split(', '))
-        for x in entry["kana"].split(', ') : highlight_words.add(x)
+    def search(self, query:str) -> Generator[list,int,int] :
+        pass
 
-        for word in highlight_words :
-            for s in sentences :
-                s["japanese"] = s["japanese"].replace(word, highlight_html.format(highlight_color, word))
-    
-    html = "<p>{0}{1}</p>"
-    
-    note[field] = "\n<hr>\n".join(map(lambda example : html.format(example["japanese"],("<br>"+example["english"] if example["english"] else '')), sentences))
+    def get_examples(self, uri:str) -> List[dict] :
+        pass
 
-    #update the menu
-    note.flush()
+class WebDict(Dict) :
+    def __urlGet__(self, url) :
+        r = requests.get(url)
+        if r.status_code==200 :
+            soup = BeautifulSoup(r.text, 'html.parser')
+            soup.prettify()
+            return soup
+        else :
+            return None

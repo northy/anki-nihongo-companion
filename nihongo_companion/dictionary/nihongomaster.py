@@ -24,28 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import quote
-
-from typing import Generator, List
-
-class Dict(object) :
-    def search(self, query:str) -> Generator[list,int,int] :
-        pass
-
-    def get_examples(self, uri:str) -> List[dict] :
-        pass
-
-class WebDict(Dict) :
-    def __urlGet__(self, url) :
-        r = requests.get(url)
-        if r.status_code==200 :
-            soup = BeautifulSoup(r.text, 'html.parser')
-            soup.prettify()
-            return soup
-        else :
-            return None
+from .base import *
 
 class NihongoMaster(WebDict) :
     def search(self, query:str) -> Generator[list,int,int] :

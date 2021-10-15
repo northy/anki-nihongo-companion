@@ -28,7 +28,7 @@ from PyQt5.QtCore import ws
 import anki
 import aqt
 
-from . import gui, dictionary, notes
+from . import gui, notes, dictionary
 
 def registerMenu() -> None :
     """Create options on card browser's menu toolbar"""
@@ -40,15 +40,14 @@ def registerMenu() -> None :
         browser.form.menubar.addMenu(menu)
 
         def addExampleSentencesToSelected() -> None :
-            d = dictionary.NihongoMaster()
             endIt = False
-
             i = 0
             cards_N = len(browser.selectedNotes())
             internal_config = {
                 "in_field": 0,
                 "out_field": 0,
-                "auto_search": False
+                "auto_search": False,
+                "dict": list(dictionary.dictionaries.keys())[0]
             }
 
             for note_id in browser.selectedNotes() :
@@ -57,21 +56,18 @@ def registerMenu() -> None :
                 i+=1
 
                 #Open any card's preview
-                #TODO: make it so that the preview is interactable
                 browser.card = note.cards()[0]
                 browser.singleCard = note.cards()[0]
                 browser._previewer = aqt.browser.PreviewDialog(browser, browser.mw, lambda : None)
-                #The following line is an ammend, removed if selection is opened in a non-blocking manner
-                #browser._previewer.setWindowFlags(browser._previewer.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
                 browser._previewer.open()
 
                 while True : #Run until select word is cancelled or skipped
-                    wSelection = gui.SelectWord(browser, d, note, internal_config)
+                    wSelection = gui.SelectWord(browser, dictionary.dictionaries, note, internal_config)
                     wSelection.setWindowTitle(wSelection.windowTitle()+' ({0}/{1})'.format(i, cards_N))
                     wSelection.show()
                     if wSelection.exec_() == QtWidgets.QDialog.Accepted :
                         wSelection.close()
-                        wExamples = gui.SelectExamples(browser, d, wSelection.searchResults[wSelection.selected], note, internal_config)
+                        wExamples = gui.SelectExamples(browser, dictionary.dictionaries[internal_config["dict"]], wSelection.searchResults[wSelection.selected], note, internal_config)
                         wExamples.setWindowTitle(wExamples.windowTitle()+' ({0}/{1})'.format(i, cards_N))
                         wExamples.show()
                         wExamples.search()

@@ -32,17 +32,18 @@ from .. import dictionary
 class SelectWord(aqt.QDialog) :
     """Select which word from a dictionary query to use"""
 
-    def __init__(self, parent, dictionary:dictionary.Dict, note, internal_config) :
+    def __init__(self, parent, dictionaries, note, internal_config) :
         #init window
         super(SelectWord,self).__init__(parent)
         self.setWindowFlags(aqt.Qt.Dialog | aqt.Qt.MSWindowsFixedSizeDialogHint)
 
         #data and methods
-        self.closed = False
-        self.dictionary = dictionary
-        self.searchResults = None
-        self.selected = None
-        self.skipped = False
+        self.closed = False #window is closed (bool)
+        self.skipped = False #user skipped (bool)
+        self.searchResults = None #search result rows (List[dict])
+        self.selected = None #selected row (int)
+        
+        self.dictionaries = dictionaries
         self.note = note
         self.internal_config = internal_config
 
@@ -51,7 +52,6 @@ class SelectWord(aqt.QDialog) :
         self.ui.setupUi(self)
         self.ui.pbSearch.setHidden(True)
         self.__updateDropdowns()
-        self.ui.cbField_in.setCurrentIndex(self.internal_config["in_field"])
 
         #hooks
         self.ui.bSearch.clicked.connect(self.__search)
@@ -59,13 +59,24 @@ class SelectWord(aqt.QDialog) :
         self.ui.bSkip.clicked.connect(self.__skip)
         self.ui.bConfirm.clicked.connect(self.__confirm)
         self.ui.listResults.doubleClicked.connect(self.__confirm)
+        self.ui.cbDict.currentTextChanged.connect(self.__changeDict)
 
         #begin search
-        if self.internal_config["auto_search"] : self.__search()
+        if self.internal_config["auto_search"] and self.dictionaries[self.internal_config["dict"]].needsSearch : self.__search()
+
+    def __changeDict(self, value) :
+        self.ui.listResults.setEnabled(False)
+        self.ui.listResults.clear()
+        self.ui.bConfirm.setEnabled(False if self.dictionaries[value].needsSearch else True)
 
     def __updateDropdowns(self) -> None :
         for field,_ in self.note.items() :
             self.ui.cbField_in.addItem(field)
+        self.ui.cbField_in.setCurrentIndex(self.internal_config["in_field"])
+
+        for field,_ in self.dictionaries.items() :
+            self.ui.cbDict.addItem(field)
+        self.ui.cbDict.setCurrentText(self.internal_config["dict"])
 
     def __search(self) -> None :
         self.ui.bSearch.setEnabled(False)
@@ -79,7 +90,7 @@ class SelectWord(aqt.QDialog) :
         self.ui.pbSearch.setValue(0)
         self.ui.pbSearch.setHidden(False)
 
-        gen = self.dictionary.search(query)
+        gen = self.dictionaries[self.ui.cbDict.currentText()].search(query)
         self.searchResults = []
 
         for results, cur, tot in gen :
@@ -121,12 +132,22 @@ class SelectWord(aqt.QDialog) :
         self.close()
     
     def __confirm(self) -> None :
-        if len(self.ui.listResults.selectedIndexes())==0 :
-            aqt.util.showInfo("No word selected!")
-            return
-        self.selected = self.ui.listResults.selectedIndexes()[0].row()
+        if self.dictionaries[self.ui.cbDict.currentText()].needsSearch :
+            if len(self.ui.listResults.selectedIndexes())==0 :
+                aqt.utils.showInfo("No word selected!")
+                return
+            self.selected = self.ui.listResults.selectedIndexes()[0].row()
+        else :
+            sel = self.note.values()[self.ui.cbField_in.currentIndex()]
+            self.searchResults = [{
+                "title": sel,
+                "uri": sel,
+                "kana": ''
+            }]
+            self.selected = 0
         self.internal_config["in_field"] = self.ui.cbField_in.currentIndex()
         self.internal_config["auto_search"] = True
+        self.internal_config["dict"] = self.ui.cbDict.currentText()
         self.accept()
     
     def __skip(self) -> None :
@@ -136,7 +157,7 @@ class SelectWord(aqt.QDialog) :
 class SelectExamples(aqt.QDialog) :
     """Select which examples from a dictionary query to use"""
 
-    def __init__(self, parent, dictionary:dictionary.Dict, queryWord:dict, note, internal_config) :
+    def __init__(self, parent, dictionary, queryWord:dict, note, internal_config) :
         #init window
         super(SelectExamples,self).__init__(parent)
         self.setWindowFlags(aqt.Qt.Dialog | aqt.Qt.MSWindowsFixedSizeDialogHint)

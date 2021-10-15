@@ -24,29 +24,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-#TODO: make settings screen
-highlight = True
-highlight_color = "#DF362D"
+from .base import *
 
-import aqt
+class Massif(WebDict) :
+    needsSearch = False
 
-def update(browser, note, field, sentences, entry) :
-    """update note's field adding sentences"""
-    
-    #TODO: improve taking conjugations
-    if highlight :
-        highlight_html = '<span style="color:{0};">{1}</span>'
+    def get_examples(self, uri:str) -> List[dict] :
+        return_results = []
 
-        highlight_words = set(entry["title"].split(', '))
-        for x in entry["kana"].split(', ') : highlight_words.add(x)
+        uri = quote(uri)
 
-        for word in highlight_words :
-            for s in sentences :
-                s["japanese"] = s["japanese"].replace(word, highlight_html.format(highlight_color, word))
-    
-    html = "<p>{0}{1}</p>"
-    
-    note[field] = "\n<hr>\n".join(map(lambda example : html.format(example["japanese"],("<br>"+example["english"] if example["english"] else '')), sentences))
+        soup = self.__urlGet__(f"https://massif.la/ja/search?q={uri}")
+        if soup==None : return None
+        try :
+            for result in soup.find_all("li", class_="text-japanese") :
+                return_results.append({
+                    "japanese": ''.join([x.strip() for x in result.find("div").find_all(text=True)]),
+                    "english": ''
+                })
+        except :
+            return None
+        
+        return return_results
 
-    #update the menu
-    note.flush()
+if __name__=="__main__" :
+    print("(Using Massif webdict as dictionary)")
+    massif = Massif()
+    query = input("What to search? ")
+    examples = massif.get_examples(query)
+    if examples!=None :
+        for example in examples :
+            print(example["japanese"])
+            print()
+    else :
+        print("No examples")
+        exit(1)
