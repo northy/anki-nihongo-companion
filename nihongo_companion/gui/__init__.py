@@ -69,7 +69,7 @@ class SelectWord(aqt.QDialog) :
             self.ui.cbField_in.addItem(field)
     
     def startSearch(self) -> None :
-        self.searchThread = aqt.QThread(parent=self)
+        self.searchThread = aqt.QThread(parent=aqt.mw)
         self.searchThread.started.connect(self.__search)
         self.searchThread.finished.connect(self.searchThread.deleteLater)
         self.searchThread.start()
