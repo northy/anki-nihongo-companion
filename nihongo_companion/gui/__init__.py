@@ -45,7 +45,6 @@ class SelectWord(aqt.QDialog) :
         self.skipped = False
         self.note = note
         self.internal_config = internal_config
-        self.searchThread = None
 
         #setup UI
         self.ui = ui_SelectWord.Ui_diagSelectWord()
@@ -55,33 +54,18 @@ class SelectWord(aqt.QDialog) :
         self.ui.cbField_in.setCurrentIndex(self.internal_config["in_field"])
 
         #hooks
-        self.ui.bSearch.clicked.connect(self.startSearch)
+        self.ui.bSearch.clicked.connect(self.__search)
         self.ui.bCancel.clicked.connect(self.__cancel)
         self.ui.bSkip.clicked.connect(self.__skip)
         self.ui.bConfirm.clicked.connect(self.__confirm)
         self.ui.listResults.doubleClicked.connect(self.__confirm)
 
         #begin search
-        if self.internal_config["auto_search"] : self.startSearch()
+        if self.internal_config["auto_search"] : self.__search()
 
     def __updateDropdowns(self) -> None :
         for field,_ in self.note.items() :
             self.ui.cbField_in.addItem(field)
-    
-    def startSearch(self) -> None :
-        self.searchThread = aqt.QThread(parent=aqt.mw)
-        self.searchThread.started.connect(self.__search)
-        self.searchThread.finished.connect(self.searchThread.deleteLater)
-        self.searchThread.start()
-    
-    def terminateSearch(self) -> None :
-        self.waitSearch()
-
-    def waitSearch(self) -> None :
-        try :
-            self.searchThread.quit()
-            self.searchThread.wait()
-        except : pass
 
     def __search(self) -> None :
         self.ui.bSearch.setEnabled(False)
@@ -101,6 +85,7 @@ class SelectWord(aqt.QDialog) :
         for results, cur, tot in gen :
             if self.closed : return
             elif results!=None and len(results)>0 :
+                aqt.QApplication.processEvents() #update
                 self.ui.pbSearch.setValue(100*cur//tot)
                 self.searchResults += results
                 for result in results :
@@ -127,8 +112,8 @@ class SelectWord(aqt.QDialog) :
         self.ui.bConfirm.setEnabled(True)
         self.ui.bSearch.setEnabled(True)
     
+    #overload close event if needed
     def closeEvent(self, a0) -> None:
-        self.terminateSearch()
         return super().closeEvent(a0)
 
     def __cancel(self) -> None :
