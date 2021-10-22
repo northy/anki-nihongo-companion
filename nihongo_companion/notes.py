@@ -39,6 +39,7 @@ def update(browser, note, field, sentences, entry) :
 
         highlight_words = set(entry["title"].split(', '))
         for x in entry["kana"].split(', ') : highlight_words.add(x)
+        if '' in highlight_words : highlight_words.remove('')
 
         for word in highlight_words :
             for s in sentences :

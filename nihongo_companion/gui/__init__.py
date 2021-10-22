@@ -68,6 +68,7 @@ class SelectWord(aqt.QDialog) :
         self.ui.listResults.setEnabled(False)
         self.ui.listResults.clear()
         self.ui.bConfirm.setEnabled(False if self.dictionaries[value].needsSearch else True)
+        self.ui.bSearch.setEnabled(True if self.dictionaries[value].needsSearch else False)
 
     def __updateDropdowns(self) -> None :
         for field,_ in self.note.items() :
