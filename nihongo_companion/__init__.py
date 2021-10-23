@@ -33,13 +33,15 @@ from . import gui, notes, dictionary
 def registerMenu() -> None :
     """Create options on card browser's menu toolbar"""
     
-    from PyQt5 import QtWidgets, QtCore
+    from PyQt5 import QtWidgets
 
     def on_setup_menus(browser) -> None:
         menu = QtWidgets.QMenu("Nihongo companion", browser.form.menubar)
         browser.form.menubar.addMenu(menu)
 
         def addExampleSentencesToSelected() -> None :
+            configObj = aqt.mw.addonManager.getConfig(__name__)
+
             endIt = False
             i = 0
             cards_N = len(browser.selectedNotes())
@@ -47,7 +49,7 @@ def registerMenu() -> None :
                 "in_field": 0,
                 "out_field": 0,
                 "auto_search": False,
-                "dict": list(dictionary.dictionaries.keys())[0]
+                "dict": configObj["defaultDict"]
             }
 
             for note_id in browser.selectedNotes() :

@@ -16,4 +16,5 @@ jobs:
           name: anki-nihongo-companion
           path: |
             **/*.py
+            **/*.json
             LICENSE

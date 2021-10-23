@@ -24,14 +24,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-#TODO: make settings screen
-highlight = True
-highlight_color = "#DF362D"
-
 import aqt
 
 def update(browser, note, field, sentences, entry) :
     """update note's field adding sentences"""
+    #TODO: Add option to append to field, instead of replace
+
+    configObj = aqt.mw.addonManager.getConfig(__name__)
+
+    highlight = configObj["highlight"]
+    highlight_color = configObj["highlightColor"]
     
     #TODO: improve taking conjugations
     if highlight :

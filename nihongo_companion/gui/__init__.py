@@ -188,7 +188,6 @@ class SelectExamples(aqt.QDialog) :
         quit.triggered.connect(self.__cancel)
     
     def __updateDropdowns(self) -> None :
-        #TODO: Remember last choice
         for field,_ in self.note.items() :
             self.ui.cbField_out.addItem(field)
     
