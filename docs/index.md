@@ -38,21 +38,19 @@ The expected results are as follows:
 
 ### Add example sentences
 
-First, open the browser and select the cards that you want to add the example sentences on. Then, on the toolbar, click "Nihongo Companion > Add example sentences to selected..."
+First, open the browser and select the cards that you want to add the example sentences on. Then, on the toolbar, click "Nihongo Companion > Add example sentences to selected...", and a new window + card previewer should open.
 
-Then, on the window, select the searching field from your note and click search.
+On the window, select the searching field from your note. Some dictionaries require searches to confirm words before fetching examples, so if needed, click search and select the desired word.
 
 **NOTE:** On NihongoMaster, searches usually work better with kana-only searches.
 
 ![Confirm Word](images/confirm_word.png)
 
-Then, select the desired word and click Confirm.
-
-If any example sentences are found, you can select them.
+After clicking confirm, if any example sentences are found, you can select them.
 
 ![Confirm Exemple](images/confirm_example.png)
 
-Upon clicking "Confirm", the selected field will get filled with the selected examples.
+Upon clicking "Confirm", the selected output field will get filled with the selected examples.
 
 **IMPORTANT**: As of yet, undo operations are not supported, so make sure to select the correct output field.
 
