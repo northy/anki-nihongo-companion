@@ -22,13 +22,15 @@ On your cards browser, select a card from the collection that you want to add ex
 
 You can then add the field to the card's HTML, by selecting the card on the browser and clicking "Cards...", then add the following code to the front/back template:
 
-```
+{% raw %}
+```html
 {{#Examples}}
 <hr>Example(s)<br>
 
 {{Examples}}
 {{/Examples}}
 ```
+{% endraw %}
 
 The expected results are as follows:
 
