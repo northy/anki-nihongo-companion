@@ -17,4 +17,5 @@ jobs:
           path: |
             **/*.py
             **/*.json
+            **/*.txt
             LICENSE

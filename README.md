@@ -2,10 +2,11 @@
 
 W.I.P. Anki addon to add japanese example sentences to decks.
 
-Currently, the only supported dictionary are:
+Currently, the supported dictionaries are:
 
 * A web-scraping dictionary for [NihongoMaster](https://nihongomaster.com);
-* A web-scraping dictionary for [Massif](https://massif.la).
+* A web-scraping dictionary for [Massif](https://massif.la);
+* A local dictonary from [Monash.edu](https://users.monash.edu/~jwb/examples.utf.gz).
 
 If you like it, please leave a positive review on the anki addon page!
 

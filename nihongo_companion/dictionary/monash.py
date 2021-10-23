@@ -24,35 +24,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import requests, re, os
-from bs4 import BeautifulSoup
-from urllib.parse import quote
+from .base import *
 
-from typing import Generator, List
-
-from ...path import USER_FILES_PATH
-
-class Dict(object) :
-    needsSearch = True
-
-    def search(self, query:str) -> Generator[list,int,int] :
-        pass
+class Monash(LocalDict) :
+    needsSearch = False
 
     def get_examples(self, uri:str) -> List[dict] :
-        pass
+        ret = []
 
-class WebDict(Dict) :
-    def __urlGet__(self, url) :
-        r = requests.get(url)
-        if r.status_code==200 :
-            soup = BeautifulSoup(r.text, 'html.parser')
-            soup.prettify()
-            return soup
-        else :
-            return None
+        iterator = self.__iterator__("monash.txt")
+        pattern = "^A: (.*)\t(.*)#.*$"
 
-class LocalDict(Dict) :
-    def __iterator__(self, file) :
-        with open(os.path.join(USER_FILES_PATH,'dictionaries/'+file), encoding="UTF-8") as f :
-            for line in f :
-                yield line
+        for line1 in iterator :
+            line2 = next(iterator)
+            if line1.find(uri)!=-1 or line2.find(uri)!=-1 :
+                reg = re.search(pattern, line1)
+                ret.append({
+                    "japanese": reg.group(1),
+                    "english": reg.group(2)
+                })
+        
+        return ret

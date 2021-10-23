@@ -24,35 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import requests, re, os
-from bs4 import BeautifulSoup
-from urllib.parse import quote
+import os
 
-from typing import Generator, List
-
-from ...path import USER_FILES_PATH
-
-class Dict(object) :
-    needsSearch = True
-
-    def search(self, query:str) -> Generator[list,int,int] :
-        pass
-
-    def get_examples(self, uri:str) -> List[dict] :
-        pass
-
-class WebDict(Dict) :
-    def __urlGet__(self, url) :
-        r = requests.get(url)
-        if r.status_code==200 :
-            soup = BeautifulSoup(r.text, 'html.parser')
-            soup.prettify()
-            return soup
-        else :
-            return None
-
-class LocalDict(Dict) :
-    def __iterator__(self, file) :
-        with open(os.path.join(USER_FILES_PATH,'dictionaries/'+file), encoding="UTF-8") as f :
-            for line in f :
-                yield line
+USER_FILES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'user_files')

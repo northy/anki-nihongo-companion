@@ -24,9 +24,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from . import nihongomaster, massif
+from . import nihongomaster, massif, monash
 
 dictionaries = {
     "Nihongo Master": nihongomaster.NihongoMaster(),
-    "Massif.la": massif.Massif()
+    "Massif.la": massif.Massif(),
+    "Monash.edu (local)": monash.Monash()
 }
