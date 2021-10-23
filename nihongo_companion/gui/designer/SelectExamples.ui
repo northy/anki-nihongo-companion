@@ -28,7 +28,7 @@
   <property name="windowTitle">
    <string>Nihongo Companion</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -79,6 +79,9 @@
         <width>9999</width>
         <height>9999</height>
        </size>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
       </property>
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
