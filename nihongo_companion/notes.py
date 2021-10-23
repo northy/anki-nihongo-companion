@@ -34,6 +34,7 @@ def update(browser, note, field, sentences, entry) :
 
     highlight = configObj["highlight"]
     highlight_color = configObj["highlightColor"]
+    useEnglish = configObj["useEnglish"]
     
     #TODO: improve taking conjugations
     if highlight :
@@ -49,7 +50,7 @@ def update(browser, note, field, sentences, entry) :
     
     html = "<p>{0}{1}</p>"
     
-    note[field] = "\n<hr>\n".join(map(lambda example : html.format(example["japanese"],("<br>"+example["english"] if example["english"] else '')), sentences))
+    note[field] = "\n<hr>\n".join(map(lambda example : html.format(example["japanese"],("<br>"+example["english"] if useEnglish and example["english"] else '')), sentences))
 
     #update the menu
     note.flush()
