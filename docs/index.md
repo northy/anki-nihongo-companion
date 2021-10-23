@@ -8,7 +8,7 @@ Currently, the supported dictionaries are:
 * A web-scraping dictionary for [Massif](https://massif.la);
 * A local dictonary from [Monash.edu's sentence bank](https://users.monash.edu/~jwb/examples.utf.gz).
 
-If you like it, please leave a positive review on the anki addon page!
+If you like it, please leave a positive review on the [anki addon page](https://ankiweb.net/shared/info/1946501448)!
 
 ## How to use
 
