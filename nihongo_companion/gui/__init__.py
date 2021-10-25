@@ -75,6 +75,8 @@ class SelectWord(aqt.QDialog) :
         for field,_ in self.note.items() :
             self.ui.cbField_in.addItem(field)
         self.ui.cbField_in.setCurrentIndex(self.internal_config["in_field"])
+        self.ui.bConfirm.setEnabled(False if self.dictionaries[self.internal_config["dict"]].needsSearch else True)
+        self.ui.bSearch.setEnabled(True if self.dictionaries[self.internal_config["dict"]].needsSearch else False)
 
         for field,_ in self.dictionaries.items() :
             self.ui.cbDict.addItem(field)
