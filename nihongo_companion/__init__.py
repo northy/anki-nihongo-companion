@@ -74,12 +74,17 @@ def registerMenu() -> None :
                         wExamples.show()
                         wExamples.search()
                         if not(wExamples.error) and wExamples.exec_() == QtWidgets.QDialog.Accepted :
-                            notes.update(browser, note, wExamples.field, [wExamples.searchResults[x] for x in wExamples.selected], wSelection.searchResults[wSelection.selected])
+                            notes.update(
+                                browser,
+                                note, wExamples.field,
+                                [wExamples.searchResults[x] for x in wExamples.selected],
+                                wSelection.searchResults[wSelection.selected],
+                                internal_config["dict"]
+                            )
                             break
-                        else :
-                            if wExamples.error :
-                                wExamples.close()
-                                aqt.utils.showInfo("Nothing found!")
+                        if wExamples.error :
+                            wExamples.close()
+                            aqt.utils.showInfo("Nothing found!")
                     else :
                         if not(wSelection.skipped) : endIt = True
                         break

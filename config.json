@@ -3,5 +3,6 @@
     "highlight": true,
     "highlightColor": "#DF362D",
     "useEnglish": true,
-    "autoSearch": true
+    "autoSearch": false,
+    "tagName": "Nihongo_Companion"
 }

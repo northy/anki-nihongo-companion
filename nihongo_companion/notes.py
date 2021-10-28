@@ -25,8 +25,9 @@ SOFTWARE.
 """
 
 import aqt
+from . import dictionary
 
-def update(browser, note, field, sentences, entry) :
+def update(browser, note, field, sentences, entry, dictName) :
     """update note's field adding sentences"""
     #TODO: Add option to append to field, instead of replace
 
@@ -51,6 +52,9 @@ def update(browser, note, field, sentences, entry) :
     html = "<p>{0}{1}</p>"
     
     note[field] = "\n<hr>\n".join(map(lambda example : html.format(example["japanese"],("<br>"+example["english"] if useEnglish and example["english"] else '')), sentences))
+
+    dictName = dictName.replace(" (local)",'').replace(" ",'_')
+    note.addTag(configObj["tagName"]+"::"+dictName)
 
     #update the menu
     note.flush()
