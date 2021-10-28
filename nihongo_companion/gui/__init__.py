@@ -27,7 +27,6 @@ SOFTWARE.
 import aqt
 
 from . import ui_SelectWord, ui_SelectExamples
-from .. import dictionary
 
 class SelectWord(aqt.QDialog) :
     """Select which word from a dictionary query to use"""
@@ -62,7 +61,8 @@ class SelectWord(aqt.QDialog) :
         self.ui.cbDict.currentTextChanged.connect(self.__changeDict)
 
         #begin search
-        if self.internal_config["auto_search"] and self.dictionaries[self.internal_config["dict"]].needsSearch : self.__search()
+        configObj = aqt.mw.addonManager.getConfig(__name__)
+        if configObj["autoSearch"] and self.internal_config["auto_search"] and self.dictionaries[self.internal_config["dict"]].needsSearch : self.__search()
 
     def __changeDict(self, value) :
         self.ui.listResults.setEnabled(False)

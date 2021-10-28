@@ -2,5 +2,6 @@
     "defaultDict": "Nihongo Master",
     "highlight": true,
     "highlightColor": "#DF362D",
-    "useEnglish": true
+    "useEnglish": true,
+    "autoSearch": true
 }
