@@ -49,7 +49,8 @@ def registerMenu() -> None :
                 "in_field": 0,
                 "out_field": 0,
                 "auto_search": False,
-                "dict": configObj["defaultDict"]
+                "dict": configObj["defaultDict"],
+                "append": configObj["defaultAppend"]
             }
 
             for note_id in browser.selectedNotes() :
@@ -75,11 +76,12 @@ def registerMenu() -> None :
                         wExamples.search()
                         if not(wExamples.error) and wExamples.exec_() == QtWidgets.QDialog.Accepted :
                             notes.update(
-                                browser,
-                                note, wExamples.field,
+                                note,
+                                wExamples.field,
                                 [wExamples.searchResults[x] for x in wExamples.selected],
                                 wSelection.searchResults[wSelection.selected],
-                                internal_config["dict"]
+                                internal_config["dict"],
+                                internal_config["append"]
                             )
                             break
                         if wExamples.error :

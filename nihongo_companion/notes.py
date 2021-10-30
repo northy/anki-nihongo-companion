@@ -27,7 +27,7 @@ SOFTWARE.
 import aqt
 from . import dictionary
 
-def update(browser, note, field, sentences, entry, dictName) :
+def update(note, field, sentences, entry, dictName, append) :
     """update note's field adding sentences"""
     #TODO: Add option to append to field, instead of replace
 
@@ -51,10 +51,19 @@ def update(browser, note, field, sentences, entry, dictName) :
     
     html = "<p>{0}{1}</p>"
     
-    note[field] = "\n<hr>\n".join(map(lambda example : html.format(example["japanese"],("<br>"+example["english"] if useEnglish and example["english"] else '')), sentences))
+    formattedHtml = "\n<hr>\n".join(map(lambda example : html.format(example["japanese"],("<br>"+example["english"] if useEnglish and example["english"] else '')), sentences))
+
+    if append :
+        note[field] += ("\n<hr>\n" if len(note[field]) and note[field][-1]!='\n' else "<hr>\n")+formattedHtml
+    else :
+        note[field] = formattedHtml
 
     dictName = dictName.replace(" (local)",'').replace(" ",'_')
+    for x in dictionary.dictionaries.keys() : print(configObj["tagName"]+"::"+x)
+    if not(append) :
+        for x in dictionary.dictionaries.keys() : note.delTag(configObj["tagName"]+"::"+x)
     note.addTag(configObj["tagName"]+"::"+dictName)
+
 
     #update the menu
     note.flush()

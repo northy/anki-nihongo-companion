@@ -183,13 +183,32 @@ class SelectExamples(aqt.QDialog) :
         self.__resizeHeaders()
         self.__updateDropdowns()
         self.ui.cbField_out.setCurrentIndex(self.internal_config["out_field"])
+        self.ui.buttonGroup.setExclusive(False)
+        self.ui.rbOverwrite.setChecked(not(self.internal_config["append"]))
+        self.ui.rbAppend.setChecked(self.internal_config["append"])
+        self.ui.buttonGroup.setExclusive(True)
 
         #hooks
         self.ui.bCancel.clicked.connect(self.__cancel)
         self.ui.bConfirm.clicked.connect(self.__confirm)
+        self.ui.rbAppend.toggled.connect(self.__onClickedAppend)
         quit = aqt.QAction("Quit", self)
         quit.triggered.connect(self.__cancel)
-    
+
+    def __onClickedAppend(self) :
+        radioBtn = self.sender()
+        if radioBtn.isChecked():
+            self.internal_config["append"] = True
+            return
+        self.internal_config["append"] = False
+
+    def __radioChanged(self) -> None :
+        if self.ui.rbAppend.isChecked() :
+            self.ui.rbOverwrite.setChecked(False)
+            return
+        self.ui.rbAppend.setChecked(False)
+        aqt.QApplication.processEvents() #update
+
     def __updateDropdowns(self) -> None :
         for field,_ in self.note.items() :
             self.ui.cbField_out.addItem(field)
@@ -204,8 +223,6 @@ class SelectExamples(aqt.QDialog) :
         self.ui.tExamples.setSelectionBehavior(aqt.QAbstractItemView.SelectRows)
 
     def search(self) -> None :
-        self.ui.pbSearch.setValue(50)
-
         self.searchResults = self.dictionary.get_examples(self.queryWord['uri'])
         if self.searchResults!=None and len(self.searchResults)>0 :
             if self.closed : return
@@ -221,7 +238,6 @@ class SelectExamples(aqt.QDialog) :
                 i+=1
                 aqt.QApplication.processEvents() #update
             self.ui.tExamples.selectRow(0)
-            self.ui.pbSearch.setValue(100)
             self.ui.tExamples.setEnabled(True)
             self.ui.bConfirm.setEnabled(True)
             self.ui.tExamples.resizeRowsToContents()
