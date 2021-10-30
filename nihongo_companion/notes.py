@@ -59,7 +59,6 @@ def update(note, field, sentences, entry, dictName, append) :
         note[field] = formattedHtml
 
     dictName = dictName.replace(" (local)",'').replace(" ",'_')
-    for x in dictionary.dictionaries.keys() : print(configObj["tagName"]+"::"+x)
     if not(append) :
         for x in dictionary.dictionaries.keys() : note.delTag(configObj["tagName"]+"::"+x)
     note.addTag(configObj["tagName"]+"::"+dictName)
