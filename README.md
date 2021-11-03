@@ -1,5 +1,7 @@
 # Nihongo Companion
 
+<img src="docs/images/nihongo_companion.png" alt="Nihongo Companion" width="40%" style="display:block; margin-left: auto; margin-right: auto;"></img>
+
 W.I.P. Anki addon to add japanese example sentences to decks.
 
 ## Usage

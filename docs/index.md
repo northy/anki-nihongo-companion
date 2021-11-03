@@ -2,6 +2,8 @@
 layout: default
 ---
 
+<img src="images/nihongo_companion.png" alt="Nihongo Companion" width="40%" style="display:block; margin-left: auto; margin-right: auto;"></img>
+
 Currently, the supported dictionaries are:
 
 * A web-scraping dictionary for [NihongoMaster](https://nihongomaster.com);

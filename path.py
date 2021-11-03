@@ -27,3 +27,4 @@ SOFTWARE.
 import os
 
 USER_FILES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'user_files')
+ICONS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'nihongo_companion/gui/icons')

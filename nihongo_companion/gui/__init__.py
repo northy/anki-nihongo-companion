@@ -24,8 +24,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import aqt
+import aqt, os
 
+from ...path import ICONS_PATH
 from . import ui_SelectWord, ui_SelectExamples
 
 class SelectWord(aqt.QDialog) :
@@ -51,6 +52,8 @@ class SelectWord(aqt.QDialog) :
         self.ui.setupUi(self)
         self.ui.pbSearch.setHidden(True)
         self.__updateDropdowns()
+        icon = aqt.QIcon(os.path.join(ICONS_PATH, "nihongo_companion.png"))
+        self.setWindowIcon(icon)
 
         #hooks
         self.ui.bSearch.clicked.connect(self.__search)
@@ -187,6 +190,8 @@ class SelectExamples(aqt.QDialog) :
         self.ui.rbOverwrite.setChecked(not(self.internal_config["append"]))
         self.ui.rbAppend.setChecked(self.internal_config["append"])
         self.ui.buttonGroup.setExclusive(True)
+        icon = aqt.QIcon(os.path.join(ICONS_PATH, "nihongo_companion.png"))
+        self.setWindowIcon(icon)
 
         #hooks
         self.ui.bCancel.clicked.connect(self.__cancel)

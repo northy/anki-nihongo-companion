@@ -25,9 +25,10 @@ SOFTWARE.
 """
 
 from PyQt5.QtCore import ws
-import anki
-import aqt
+import anki, aqt, os
+import webbrowser
 
+from ..path import ICONS_PATH
 from . import gui, notes, dictionary
 
 def registerMenu() -> None :
@@ -94,9 +95,17 @@ def registerMenu() -> None :
                 except : pass
                 browser._previewer=None
             browser.mw.reset()
-                
+        
+        icon = aqt.QIcon(os.path.join(ICONS_PATH, "nihongo_companion.png"))
+
         action = aqt.qt.QAction("Add example sentences to selected...", menu)
+        action.setIcon(icon)
         aqt.qconnect(action.triggered, addExampleSentencesToSelected)
+        menu.addAction(action)
+
+        action = aqt.qt.QAction("Help", menu)
+        action.setIcon(icon)
+        aqt.qconnect(action.triggered, lambda : webbrowser.open('https://northy.github.io/anki-nihongo-companion/'))
         menu.addAction(action)
     
     anki.hooks.addHook(
