@@ -22,4 +22,5 @@ jobs:
             **/*.py
             **/*.json
             **/*.txt
+            nihongo_companion/gui/icons/*
             LICENSE

@@ -1,6 +1,8 @@
 # Nihongo Companion
 
-<img src="docs/images/nihongo_companion.png" alt="Nihongo Companion" width="40%" style="display:block; margin-left: auto; margin-right: auto;"></img>
+<p align="center">
+    <img src="docs/images/nihongo_companion.png" alt="Nihongo Companion" width="40%">
+</p>
 
 W.I.P. Anki addon to add japanese example sentences to decks.
 

@@ -2,7 +2,7 @@
 layout: default
 ---
 
-<img src="images/nihongo_companion.png" alt="Nihongo Companion" width="40%" style="display:block; margin-left: auto; margin-right: auto;"></img>
+<img src="images/nihongo_companion.png" alt="Nihongo Companion" width="40%" style="display:block; margin-left: auto; margin-right: auto;">
 
 Currently, the supported dictionaries are:
 
