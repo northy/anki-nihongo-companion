@@ -24,7 +24,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from . import menus
+import anki, aqt
 
-def registerMenu() -> None :
-    menus.registerMenus()
+from . import browser, main_window
+
+def registerMenus() -> None :
+    main_window.on_setup_menus()
+    
+    anki.hooks.addHook(
+        'browser.setupMenus',
+        browser.on_setup_menus,
+    )
