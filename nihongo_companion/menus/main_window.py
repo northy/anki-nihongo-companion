@@ -33,13 +33,11 @@ from ...path import ICONS_PATH, USER_FILES_PATH
 def on_setup_menus() -> None:
         icon = aqt.QIcon(os.path.join(ICONS_PATH, "nihongo_companion.png"))
 
-        rtkDict = None
         rtkSet = None
         rtkIndex = None
 
         with open(os.path.join(USER_FILES_PATH,"dictionaries/rtk.txt"), encoding="UTF-8") as f :
             line = f.readline()
-            rtkDict = {a:b for a,b in zip(line, range(1,3001))}
             rtkSet = set(c for c in line)
             rtkIndex = [c for c in line]
 
