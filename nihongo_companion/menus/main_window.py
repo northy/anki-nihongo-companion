@@ -92,7 +92,8 @@ def on_setup_menus() -> None:
             html = """<h1>Stats:</h1><ul>
 <li style="font-size: 1.5em">RTK 1: {}/2200 ({:.2f}%)</li>
 <li style="font-size: 1.5em">RTK 3: {}/800 ({:.2f}%)</li>
-<li style="font-size: 1.5em">Other: {}</li></ul>""".format(cRTK1, cRTK1/22, cRTK3, cRTK3/8, len(kanjis_other))
+<li style="font-size: 1.5em">Other: {}</li>
+<li style="font-size: 1.5em">Total: {}</li></ul>""".format(cRTK1, cRTK1/22, cRTK3, cRTK3/8, len(kanjis_other), cRTK1+cRTK3+len(kanjis_other))
             i = 1
             html+='<h2>RTK 1:</h2>'
             for kanji in rtkIndex :
