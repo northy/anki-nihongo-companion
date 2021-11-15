@@ -68,10 +68,12 @@ def on_setup_menus(browser) -> None:
                 wSelection.show()
                 if wSelection.exec_() == QtWidgets.QDialog.Accepted :
                     wSelection.close()
+                    progress = aqt.mw.progress.start(immediate=True)
+                    progress.show()
+                    aqt.QApplication.processEvents()
                     wExamples = gui.SelectExamples(browser, dictionary.dictionaries[internal_config["dict"]], wSelection.searchResults[wSelection.selected], note, internal_config)
                     wExamples.setWindowTitle(wExamples.windowTitle()+' ({0}/{1})'.format(i, cards_N))
                     wExamples.show()
-                    aqt.mw.progress.start(immediate=True)
                     wExamples.search()
                     aqt.mw.progress.finish()
                     if not(wExamples.error) and wExamples.exec_() == QtWidgets.QDialog.Accepted :
