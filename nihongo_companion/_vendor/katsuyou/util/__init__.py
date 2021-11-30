@@ -21,25 +21,3 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-from .base import *
-
-class Monash(LocalDict) :
-    needsSearch = False
-
-    def get_examples(self, uri:str) -> List[dict] :
-        ret = []
-
-        iterator = self.__iterator__("monash.txt")
-        pattern = "^A: (.*)\t(.*)#.*$"
-
-        for line1 in iterator :
-            line2 = next(iterator)
-            if line1.find(uri)!=-1 or line2.find(uri)!=-1 :
-                reg = re.search(pattern, line1)
-                ret.append({
-                    "japanese": reg.group(1),
-                    "english": reg.group(2)
-                })
-        
-        return ret
