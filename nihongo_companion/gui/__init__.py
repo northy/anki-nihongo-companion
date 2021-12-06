@@ -69,6 +69,8 @@ class SelectWord(aqt.QDialog) :
         if configObj["autoSearch"] and self.internal_config["auto_search"] and self.dictionaries[self.internal_config["dict"]].needsSearch : self.__search()
 
     def __changeDict(self, value) :
+        self.ui.pbSearch.setHidden(True)
+        self.ui.bContinue.setHidden(True)
         self.ui.listResults.setEnabled(False)
         self.ui.listResults.clear()
         self.ui.bConfirm.setEnabled(False if self.dictionaries[value].needsSearch else True)
@@ -105,17 +107,29 @@ class SelectWord(aqt.QDialog) :
         self.__continue()
     
     def __continue(self) -> None :
+        if self.gen is None : return
+
+        results, cur, tot = None, None, None
+        try :
+            results, cur, tot = next(self.gen)
+        except StopIteration:
+            self.ui.bContinue.setEnabled(False)
+            self.gen = None
+            return
+        
+        if self.closed : return
+
         self.ui.bSearch.setEnabled(False)
         self.ui.bContinue.setEnabled(False)
         self.ui.listResults.setEnabled(False)
         self.ui.bConfirm.setEnabled(False)
 
-        results, cur, tot = next(self.gen)
-        if self.closed : return
-        elif results!=None and len(results)>0 :
+        if results!=None and len(results)>0 :
             aqt.QApplication.processEvents() #update
             self.ui.pbSearch.setValue(100*cur//tot)
-            if 100*cur//tot == 100 : self.ui.bContinue.setEnabled(False)
+            if 100*cur//tot == 100 :
+                self.ui.bContinue.setEnabled(False)
+                self.gen = None
             self.searchResults += results
             for result in results :
                 item = aqt.QListWidgetItem()
