@@ -40,6 +40,7 @@ class SelectWord(aqt.QDialog) :
         self.skipped = False #user skipped (bool)
         self.searchResults = None #search result rows (List[dict])
         self.selected = None #selected row (int)
+        self.gen = None #search generator
         
         self.dictionaries = dictionaries
         self.note = note
@@ -49,6 +50,7 @@ class SelectWord(aqt.QDialog) :
         self.ui = ui_SelectWord.Ui_diagSelectWord()
         self.ui.setupUi(self)
         self.ui.pbSearch.setHidden(True)
+        self.ui.bContinue.setHidden(True)
         self.__updateDropdowns()
         icon = aqt.QIcon(os.path.join(ICONS_PATH, "nihongo_companion.png"))
         self.setWindowIcon(icon)
@@ -58,6 +60,7 @@ class SelectWord(aqt.QDialog) :
         self.ui.bCancel.clicked.connect(self.__cancel)
         self.ui.bSkip.clicked.connect(self.__skip)
         self.ui.bConfirm.clicked.connect(self.__confirm)
+        self.ui.bContinue.clicked.connect(self.__continue)
         self.ui.listResults.doubleClicked.connect(self.__confirm)
         self.ui.cbDict.currentTextChanged.connect(self.__changeDict)
 
@@ -85,49 +88,61 @@ class SelectWord(aqt.QDialog) :
 
     def __search(self) -> None :
         self.ui.bSearch.setEnabled(False)
+        self.ui.listResults.setEnabled(False)
+        self.ui.bConfirm.setEnabled(False)
+        self.ui.bContinue.setEnabled(True)
+        self.ui.listResults.clear()
 
         query = self.note.values()[self.ui.cbField_in.currentIndex()]
 
-        self.ui.listResults.setEnabled(False)
-        self.ui.bConfirm.setEnabled(False)
-        self.ui.listResults.clear()
-
         self.ui.pbSearch.setValue(0)
         self.ui.pbSearch.setHidden(False)
+        self.ui.bContinue.setHidden(False)
 
-        gen = self.dictionaries[self.ui.cbDict.currentText()].search(query)
+        self.gen = self.dictionaries[self.ui.cbDict.currentText()].search(query)
         self.searchResults = []
 
-        for results, cur, tot in gen :
-            if self.closed : return
-            elif results!=None and len(results)>0 :
-                aqt.QApplication.processEvents() #update
-                self.ui.pbSearch.setValue(100*cur//tot)
-                self.searchResults += results
-                for result in results :
-                    item = aqt.QListWidgetItem()
-                    item.setText(
-                        result["title"]+'\n'+
-                        result["kana"]+" ["+result["type"]+"]\n - "+
-                        "\n - ".join(result["english"])
-                    )
-                    self.ui.listResults.addItem(item)
-                    if self.selected == None :
-                        self.selected = 0
-                        self.ui.listResults.setCurrentItem(item)
-                aqt.QApplication.processEvents() #update
-            else :
-                self.searchResults = None
-                self.ui.pbSearch.setValue(0)
-                self.ui.bSearch.setEnabled(True)
-                self.ui.pbSearch.setHidden(True)
-                aqt.utils.showInfo("Nothing found!")
-                return
-        
+        self.__continue()
+    
+    def __continue(self) -> None :
+        self.ui.bSearch.setEnabled(False)
+        self.ui.bContinue.setEnabled(False)
+        self.ui.listResults.setEnabled(False)
+        self.ui.bConfirm.setEnabled(False)
+
+        results, cur, tot = next(self.gen)
+        if self.closed : return
+        elif results!=None and len(results)>0 :
+            aqt.QApplication.processEvents() #update
+            self.ui.pbSearch.setValue(100*cur//tot)
+            if 100*cur//tot == 100 : self.ui.bContinue.setEnabled(False)
+            self.searchResults += results
+            for result in results :
+                item = aqt.QListWidgetItem()
+                item.setText(
+                    result["title"]+'\n'+
+                    result["kana"]+" ["+result["type"]+"]\n - "+
+                    "\n - ".join(result["english"])
+                )
+                self.ui.listResults.addItem(item)
+                if self.selected == None :
+                    self.selected = 0
+                    self.ui.listResults.setCurrentItem(item)
+            aqt.QApplication.processEvents() #update
+        else :
+            self.searchResults = None
+            self.ui.pbSearch.setValue(0)
+            self.ui.bSearch.setEnabled(True)
+            self.ui.pbSearch.setHidden(True)
+            self.ui.bContinue.setHidden(True)
+            aqt.utils.showInfo("Nothing found!")
+            return
+
         self.ui.listResults.setEnabled(True)
         self.ui.bConfirm.setEnabled(True)
+        self.ui.bContinue.setEnabled(True)
         self.ui.bSearch.setEnabled(True)
-    
+
     #overload close event if needed
     def closeEvent(self, a0) -> None:
         return super().closeEvent(a0)
