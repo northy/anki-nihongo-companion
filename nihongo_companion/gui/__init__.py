@@ -154,7 +154,7 @@ class SelectWord(aqt.QDialog) :
 
         self.ui.listResults.setEnabled(True)
         self.ui.bConfirm.setEnabled(True)
-        self.ui.bContinue.setEnabled(True)
+        if self.gen is not None : self.ui.bContinue.setEnabled(True)
         self.ui.bSearch.setEnabled(True)
 
     #overload close event if needed
