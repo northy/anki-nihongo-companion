@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from collections import deque
+DEBUG = False
 
 class Matcher(object) :
     def __init__(self, **kwargs) :
@@ -43,7 +43,7 @@ class Matcher(object) :
         self._trie = None #chars (list[str])
         self._trie_d = None #depth (list[int])
         self._trie_c = None #children (list[dict[int]])
-        self._trie_s = None #complete string (list[str])
+        if DEBUG : self._trie_s = None #complete string (list[str])
         self._trie_f = None #final (set)
         self._trie_p = None #parent (list[int])
         self._trie_fl = None #fail-link (list[int])
@@ -66,7 +66,7 @@ class Matcher(object) :
     def _build_trie(self) :
         #implementation of the aho-corasick algorithm with fail-links
         self._trie = ['']
-        self._trie_s = ['']
+        if DEBUG : self._trie_s = ['']
         self._trie_d = [0]
         self._trie_c = [dict()]
         self._trie_f = set()
@@ -81,7 +81,7 @@ class Matcher(object) :
                     self._trie_c.append(dict())
                     self._trie_p.append(t)
                     self._trie_d.append(self._trie_d[t] + 1)
-                    self._trie_s.append(self._trie_s[t] + c)
+                    if DEBUG : self._trie_s.append(self._trie_s[t] + c)
                     self._trie_c[t][c] = i
                     t = i
                     i+=1
@@ -135,8 +135,9 @@ class Matcher(object) :
                 automaton = self._trie_fl[automaton]
             if string[i] not in self._trie_c[automaton] : continue
 
-            #got to final node
             automaton = self._trie_c[automaton][string[i]]
+
+            #got to final node
             if automaton in self._trie_f :
                 start = i-self._trie_d[automaton]+1
                 end = i+1
@@ -150,13 +151,36 @@ class Matcher(object) :
                 yield start, end
 
     def longest_matches(self, string:str) :
-        lbs = {}
-        for s,e in self.matches(string) :
-            lbs[s] = max(lbs.setdefault(s, 0), e)
+        if self._trie is None : self._build_trie()
+
+        automaton = 0
+        curLongest = 0
+
+        for i in range(len(string)) :
+            while automaton!=0 :
+                if string[i] in self._trie_c[automaton] : break
+                automaton = self._trie_fl[automaton]
+            
+            if automaton==0 and curLongest!=0 :
+                start = i-self._trie_d[curLongest]
+                end = start+self._trie_d[curLongest]
+                yield start, end
+                curLongest = 0
+
+            if string[i] not in self._trie_c[automaton] : continue
+
+            automaton = self._trie_c[automaton][string[i]]
+            
+            #got to final node
+            if automaton in self._trie_f :
+                curLongest = automaton if self._trie_d[curLongest]<=self._trie_d[automaton] else curLongest
+            else :
+                #dictionary link
+                if automaton in self._trie_dl :
+                    dl = self._trie_dl[automaton]
+                    curLongest = dl if self._trie_d[curLongest]<self._trie_d[dl] else curLongest
         
-        dll = sorted(lbs.items())
-        li = -1
-        for s,e in dll :
-            if s>=li :
-                yield s, e
-                li = e
+        if curLongest!=0 :
+            start = i-self._trie_d[curLongest]+1
+            end = start+self._trie_d[curLongest]
+            yield start, end

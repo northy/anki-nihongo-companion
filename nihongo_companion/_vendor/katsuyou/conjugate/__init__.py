@@ -30,6 +30,7 @@ class Adjective(object) :
         assert word[-1]=="い", "Word passed as argument is not an adjective"
 
         self._lookup = i_adjective.lookup
+        self._irregular = irregular.lookup.adjective
         self._word = word
         self._forms = Bundle()
 
@@ -44,8 +45,14 @@ class Adjective(object) :
         return self._forms
     
     def conjugate(self, type:str="*", polarity:str="*", form:str="*") :
-        if self._word.endswith("いい") or self._word.endswith("良い") :
-            self._forms.update(irregular.II(self._word))
+        if self._irregular is not None :
+            for k in self._irregular :
+                if self._word.endswith(k) :
+                    it = self._irregular[k]
+                    self._forms.update(it[0](self._word))
+                    self._lookup = it[1]
+                    break
+            self.irregular = None
         
         lookup = self._lookup
 
@@ -81,7 +88,7 @@ class Verb(object) :
         assert word[-1] in ["く", "ぐ", "す", "ぶ", "む", "ぬ", "う", "つ", "る"], "Word passed as argument is not a verb"
 
         self._word = word
-        self.irregular = irregular
+        self._irregular = irregular.lookup.verb
         self._lookup = ichidan_verb.lookup if ichidan else godan_verb.lookup
         self._forms = Bundle()
 
@@ -96,14 +103,14 @@ class Verb(object) :
         return self._forms
     
     def conjugate(self, type:str="*", polarity:str="*", form:str="*") :
-        if self._word.endswith("する") or self._word.endswith("為る") :
-            self._forms.update(irregular.SURU(self._word))
-            self._lookup = ichidan_verb.lookup
-        elif self._word.endswith("くる") or self._word.endswith("来る") :
-            self._forms.update(irregular.KURU(self._word))
-            self._lookup = ichidan_verb.lookup
-        elif self._word.endswith("御座る") or self._word.endswith("ござる") or self._word.endswith("ご座る") :
-            self._forms.update(irregular.GOZARU(self._word))
+        if self._irregular is not None :
+            for k in self._irregular :
+                if self._word.endswith(k) :
+                    it = self._irregular[k]
+                    self._forms.update(it[0](self._word))
+                    self._lookup = it[1]
+                    break
+            self.irregular = None
 
         lookup = self._lookup
 

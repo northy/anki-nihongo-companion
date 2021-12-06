@@ -23,9 +23,10 @@
 # SOFTWARE.
 
 from .util.bundle import Bundle
+from . import i_adjective, ichidan_verb, godan_verb
 
-#為る, する
-SURU = lambda word : Bundle(
+#為る、する
+SURU = (lambda word : Bundle(
     stem = Bundle(
         neutral = Bundle(
             te_form = word[:-2]+("為" if word[-2]=="為" else "し")+"て",
@@ -40,10 +41,10 @@ SURU = lambda word : Bundle(
             imperative = word[:-2]+("為" if word[-2]=="為" else "し")+"ろ"
         )
     )
-)
+), ichidan_verb.lookup)
 
-#くる, 来る
-KURU = lambda word : Bundle(
+#くる、来る
+KURU = (lambda word : Bundle(
     stem = Bundle(
         neutral = Bundle(
             te_form = word[:-2]+("来" if word[-2]=="来" else "き")+"て",
@@ -62,10 +63,10 @@ KURU = lambda word : Bundle(
             nonpast = word[:-2]+("来" if word[-2]=="来" else "こ")+"ない"
         )
     )
-)
+), ichidan_verb.lookup)
 
 #いい、良い
-II = lambda word : Bundle(
+II = (lambda word : Bundle(
     stem = Bundle(
         neutral = Bundle(
             connective = word[:-2]+("良" if word[-2]=="良" else "よ")+"く"
@@ -77,13 +78,42 @@ II = lambda word : Bundle(
             ba_conditional = word[:-2]+("良" if word[-2]=="良" else "よ")+"ければ"
         )
     )
-)
+), i_adjective.lookup)
 
-#御座る, ご座る, ござる
-GOZARU = lambda word : Bundle(
+#御座る、ご座る、ござる
+GOZARU = (lambda word : Bundle(
     stem = Bundle(
         neutral = Bundle(
             i_stem = word[:-1]+"い"
         )
+    )
+), godan_verb.lookup)
+
+#ある、有る, 在る
+ARU = (lambda word : Bundle(
+    plain = Bundle(
+        negative = Bundle(
+            nonpast = "ない" if word[-2]=="あ" else "無い"
+        )
+    )
+), godan_verb.lookup)
+
+#Returns (object, lookup)
+lookup = Bundle(
+    verb = Bundle(
+        為る = SURU,
+        する = SURU,
+        くる = KURU,
+        来る = KURU,
+        御座る = GOZARU,
+        ご座る = GOZARU,
+        ござる = GOZARU,
+        ある = ARU,
+        有る = ARU,
+        在る = ARU
+    ),
+    adjective = Bundle(
+        いい = II,
+        良い = II
     )
 )

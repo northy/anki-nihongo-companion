@@ -55,8 +55,3 @@ After clicking confirm, if any example sentences are found, you can select them.
 Upon clicking "Confirm", the selected output field will get filled with the selected examples.
 
 **IMPORTANT**: As of yet, undo operations are not supported, so make sure to select the correct output field.
-
-### TODO:
-
-- Highlight conjugated words
-- Add new dictionaries

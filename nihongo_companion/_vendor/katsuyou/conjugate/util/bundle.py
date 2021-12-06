@@ -83,9 +83,9 @@ class Bundle(dict):
             ptr = ptr[k]
         return ptr.setdefault(k, None)
     
-    def assert_equal(self, other:dict) :
+    def assert_equal(self, other:dict, path:str="") :
         keys = set().union(self.keys()).union(other.keys())
         for k in keys :
             assert k in self and k in other, k
-            if isinstance(self[k], Bundle) : self[k].assert_equal(other[k])
-            else : assert self[k]==other[k], str(k)+': '+str(self[k])+' '+str(other[k])
+            if isinstance(self[k], Bundle) : self[k].assert_equal(other[k], path+k+"::")
+            else : assert self[k]==other[k], path+str(k)+" - "+str(self[k])+" | "+str(other[k])
