@@ -96,13 +96,13 @@ def on_setup_menus() -> None:
             html+='<h2>RTK 1:</h2>'
             for kanji in rtkIndex :
                 if i == 2201 : html+='<h2>RTK 3:</h2>'
-                styling = "background-color: {}; color: inherit; text-decoration: none; padding: 2px; border: 1px solid rgba(0,0,0,0.5); font-size: 1.5em; display: inline-block;".format("green" if kanji in kanjis_rtk else "red")
+                styling = "background-color: {}; color: inherit; text-decoration: none; padding: 2px; border: 1px solid rgba(0,0,0,0.5); font-size: 1.5em; display: inline-block;".format("blue" if kanji in kanjis_rtk else "red")
                 html+='<a href="https://jisho.org/search/{1}%20%23kanji" style="{0}">{1}</a>'.format(styling, kanji)
                 i+=1
             
             html+='<h2>Other kanji (not in RTK):</h2>'
             for kanji in kanjis_other :
-                styling = "color: inherit; text-decoration: none; padding: 2px; border: 1px solid rgba(0,0,0,0.5); font-size: 1.5em; display: inline-block;"
+                styling = "background-color: {}; color: inherit; text-decoration: none; padding: 2px; border: 1px solid rgba(0,0,0,0.5); font-size: 1.5em; display: inline-block;".format("blue")
                 html+='<a href="https://jisho.org/search/{1}%20%23kanji" style="{0}">{1}</a>'.format(styling, kanji)
 
             app = aqt.QDialog(aqt.mw)
