@@ -83,6 +83,7 @@ def on_setup_menus(browser) -> None:
                             wExamples.field,
                             [wExamples.searchResults[x] for x in wExamples.selected],
                             wSelection.searchResults[wSelection.selected],
+                            wExamples.extraReadings,
                             internal_config["dict"],
                             internal_config["append"]
                         )

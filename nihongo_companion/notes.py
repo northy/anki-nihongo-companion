@@ -23,11 +23,14 @@
 # SOFTWARE.
 
 import aqt
+from anki import notes
 from . import dictionary
 from ._vendor.katsuyou import conjugate
 from ._vendor.katsuyou.util import matcher
 
-def update(note, field, sentences, entry, dictName, append) :
+from typing import Dict, List, Set
+
+def update(note:notes.Note, field:str, sentences:List[Dict], entry:Dict, extraReadings:Set, dictName:str, append:bool) :
     """update note's field adding sentences"""
     configObj = aqt.mw.addonManager.getConfig(__name__)
 
@@ -40,7 +43,7 @@ def update(note, field, sentences, entry, dictName, append) :
         highlight_html_end = '</span>'
         highlight_html_len = len(highlight_html_begin)+len(highlight_html_end)
 
-        highlight_words = set(entry["title"].split(', '))
+        highlight_words = set(entry["title"].split(', ')).union(extraReadings)
         for x in entry["kana"].split(', ') : highlight_words.add(x)
         if '' in highlight_words : highlight_words.remove('')
 
@@ -69,6 +72,7 @@ def update(note, field, sentences, entry, dictName, append) :
         for sentence in sentences :
             off = 0
             for s,e in m.longest_matches(sentence["japanese"]) :
+                print(s,e,sentence["japanese"][s:e]) #
                 s+=off
                 e+=off
                 sentence["japanese"] = sentence["japanese"][:s]+highlight_html_begin+sentence["japanese"][s:e]+highlight_html_end+sentence["japanese"][e:]

@@ -197,15 +197,16 @@ class SelectExamples(aqt.QDialog) :
         self.setWindowFlags(aqt.Qt.Dialog | aqt.Qt.MSWindowsFixedSizeDialogHint)
 
         #data and methods
-        self.closed = False
-        self.dictionary = dictionary
-        self.queryWord = queryWord
-        self.internal_config = internal_config
-        self.searchResults = None
-        self.selected = None
-        self.error = False
-        self.field = None
-        self.note = note
+        self.closed = False #bool
+        self.dictionary = dictionary #dictionary
+        self.queryWord = queryWord #dict
+        self.internal_config = internal_config #dict
+        self.searchResults = None #list
+        self.selected = None #list
+        self.error = False #bool
+        self.field = None #str
+        self.extraReadings = None #set[str]
+        self.note = note #note
 
         #setup UI
         self.ui = ui_SelectExamples.Ui_diagSelectExamples()
@@ -287,4 +288,5 @@ class SelectExamples(aqt.QDialog) :
         self.field = self.note.keys()[self.ui.cbField_out.currentIndex()]
         self.selected = list(sorted(set(map(lambda index : index.row(), self.ui.tExamples.selectedIndexes()))))
         self.internal_config["out_field"] = self.ui.cbField_out.currentIndex()
+        self.extraReadings = set(self.ui.leReadings.text().replace('、',',').split(','))
         self.accept()

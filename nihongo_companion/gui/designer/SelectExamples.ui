@@ -80,6 +80,20 @@
      </widget>
     </item>
     <item>
+     <layout class="QHBoxLayout" name="hlReadings">
+      <item>
+       <widget class="QLabel" name="labelReadings">
+        <property name="text">
+         <string>Add readings to highlight (comma sep.)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="leReadings"/>
+      </item>
+     </layout>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
