@@ -155,6 +155,7 @@ class Matcher(object) :
 
         automaton = 0
         curLongest = 0
+        curLongestAttrib = 0
 
         for i in range(len(string)) :
             while automaton!=0 :
@@ -162,10 +163,11 @@ class Matcher(object) :
                 automaton = self._trie_fl[automaton]
             
             if automaton==0 and curLongest!=0 :
-                start = i-self._trie_d[curLongest]
+                start = curLongestAttrib
                 end = start+self._trie_d[curLongest]
                 yield start, end
                 curLongest = 0
+                curLongestAttrib = 0
 
             if string[i] not in self._trie_c[automaton] : continue
 
@@ -173,14 +175,18 @@ class Matcher(object) :
             
             #got to final node
             if automaton in self._trie_f :
-                curLongest = automaton if self._trie_d[curLongest]<=self._trie_d[automaton] else curLongest
+                if self._trie_d[curLongest]<=self._trie_d[automaton] :
+                    curLongest = automaton
+                    curLongestAttrib = i-self._trie_d[curLongest]+1
             else :
                 #dictionary link
                 if automaton in self._trie_dl :
                     dl = self._trie_dl[automaton]
-                    curLongest = dl if self._trie_d[curLongest]<self._trie_d[dl] else curLongest
+                    if self._trie_d[curLongest]<self._trie_d[dl] :
+                        curLongest = dl
+                        curLongestAttrib = i-self._trie_d[curLongest]+1
         
         if curLongest!=0 :
-            start = i-self._trie_d[curLongest]+1
+            start = curLongestAttrib
             end = start+self._trie_d[curLongest]
             yield start, end

@@ -61,6 +61,15 @@ def plain_positive_past(word:str, forms:Bundle) :
     if forms is not None : forms.recursive_set("plain", "positive", "past", ret)
     return ret
 
+def plain_positive_assumptive(word:str, forms:Bundle) :
+    if forms is not None :
+        cache = forms.recursive_get("plain", "positive", "assumptive")
+        if cache is not None : return cache
+
+    ret = stem_neutral_i_stem(word, forms)+"そう"
+    if forms is not None : forms.recursive_set("plain", "positive", "assumptive", ret)
+    return ret
+
 def plain_positive_optative(word:str, forms:Bundle) :
     if forms is not None :
         cache = forms.recursive_get("plain", "positive", "optative")
@@ -194,6 +203,24 @@ def plain_negative_past(word:str, forms:Bundle) :
 
     ret = i_adjective.plain_positive_past(plain_negative_nonpast(word, forms), None)
     if forms is not None : forms.recursive_set("plain", "negative", "past", ret)
+    return ret
+
+def plain_negative_assumptive(word:str, forms:Bundle) :
+    if forms is not None :
+        cache = forms.recursive_get("plain", "negative", "assumptive")
+        if cache is not None : return cache
+
+    ret = plain_negative_nonpast(word, forms)[:-1]+"そう"
+    if forms is not None : forms.recursive_set("plain", "negative", "assumptive", ret)
+    return ret
+
+def plain_negative_te_form(word:str, forms:Bundle) :
+    if forms is not None :
+        cache = forms.recursive_get("plain", "negative", "te_form")
+        if cache is not None : return cache
+
+    ret = i_adjective.plain_positive_te_form(plain_negative_nonpast(word, forms), None)
+    if forms is not None : forms.recursive_set("plain", "negative", "te_form", ret)
     return ret
 
 def plain_negative_optative(word:str, forms:Bundle) :
@@ -477,6 +504,7 @@ lookup = Bundle(
         positive = Bundle(
             nonpast = plain_positive_nonpast,
             past = plain_positive_past,
+            assumptive = plain_positive_assumptive,
             optative = plain_positive_optative,
             past_optative = plain_positive_past_optative,
             optative_te_form = plain_positive_optative_te_form,
@@ -494,6 +522,8 @@ lookup = Bundle(
         negative = Bundle(
             nonpast = plain_negative_nonpast,
             past = plain_negative_past,
+            assumptive = plain_negative_assumptive,
+            te_form = plain_negative_te_form,
             optative = plain_negative_optative,
             past_optative = plain_negative_past_optative,
             optative_te_form = plain_negative_optative_te_form,

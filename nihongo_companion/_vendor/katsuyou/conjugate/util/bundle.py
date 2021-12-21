@@ -86,6 +86,6 @@ class Bundle(dict):
     def assert_equal(self, other:dict, path:str="") :
         keys = set().union(self.keys()).union(other.keys())
         for k in keys :
-            assert k in self and k in other, k
+            assert k in self and k in other, "missing: "+path+str(k)
             if isinstance(self[k], Bundle) : self[k].assert_equal(other[k], path+k+"::")
-            else : assert self[k]==other[k], path+str(k)+" - "+str(self[k])+" | "+str(other[k])
+            else : assert self[k]==other[k], "different: "+path+str(k)+" - "+str(self[k])+" | "+str(other[k])

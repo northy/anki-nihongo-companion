@@ -51,6 +51,15 @@ def plain_positive_past(word:str, forms:Bundle) :
     if forms is not None : forms.recursive_set("plain", "positive", "past", ret)
     return ret
 
+def plain_positive_assumptive(word:str, forms:Bundle) :
+    if forms is not None :
+        cache = forms.recursive_get("plain", "positive", "assumptive")
+        if cache is not None : return cache
+
+    ret = word[:-1]+"そう"
+    if forms is not None : forms.recursive_set("plain", "positive", "assumptive", ret)
+    return ret
+
 def plain_positive_presumptive(word:str, forms:Bundle) :
     if forms is not None :
         cache = forms.recursive_get("plain", "positive", "presumptive")
@@ -94,6 +103,15 @@ def plain_negative_past(word:str, forms:Bundle) :
 
     ret = plain_positive_past(plain_negative_nonpast(word, forms), None)
     if forms is not None : forms.recursive_set("plain", "negative", "past", ret)
+    return ret
+
+def plain_negative_assumptive(word:str, forms:Bundle) :
+    if forms is not None :
+        cache = forms.recursive_get("plain", "negative", "assumptive")
+        if cache is not None : return cache
+
+    ret = plain_negative_nonpast(word, forms)[:-1]+"さそう"
+    if forms is not None : forms.recursive_set("plain", "negative", "assumptive", ret)
     return ret
 
 def plain_negative_presumptive(word:str, forms:Bundle) :
@@ -187,6 +205,7 @@ lookup = Bundle(
         positive = Bundle(
             nonpast = plain_positive_nonpast,
             past = plain_positive_past,
+            assumptive = plain_positive_assumptive,
             presumptive = plain_positive_presumptive,
             ba_conditional = plain_positive_ba_conditional,
             te_form = plain_positive_te_form
@@ -194,6 +213,7 @@ lookup = Bundle(
         negative = Bundle(
             nonpast = plain_negative_nonpast,
             past = plain_negative_past,
+            assumptive = plain_negative_assumptive,
             presumptive = plain_negative_presumptive,
             ba_conditional = plain_negative_ba_conditional,
             te_form = plain_negative_te_form

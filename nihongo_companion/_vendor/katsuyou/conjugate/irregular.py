@@ -75,6 +75,7 @@ II = (lambda word : Bundle(
     plain = Bundle(
         positive = Bundle(
             past = word[:-2]+("良" if word[-2]=="良" else "よ")+"かった",
+            assumptive = word[:-2]+("良" if word[-2]=="良" else "よ")+"さそう",
             ba_conditional = word[:-2]+("良" if word[-2]=="良" else "よ")+"ければ"
         )
     )
@@ -93,7 +94,8 @@ GOZARU = (lambda word : Bundle(
 ARU = (lambda word : Bundle(
     plain = Bundle(
         negative = Bundle(
-            nonpast = "ない" if word[-2]=="あ" else "無い"
+            nonpast = word[:-2]+("ない" if word[-2]=="あ" else "無い"),
+            assumptive = word[:-2]+("なさそう" if word[-2]=="あ" else "無さそう")
         )
     )
 ), godan_verb.lookup)
