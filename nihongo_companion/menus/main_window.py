@@ -70,13 +70,18 @@ def on_setup_menus() -> None:
             if not deck:
                 aqt.utils.showInfo("Please select a deck!")
                 return
+            
             kanjis_rtk = set()
             kanjis_other = set()
             cache = set()
             cRTK1, cRTK3 = 0,0
+
+            configObj = aqt.mw.addonManager.getConfig(__name__)
+            fieldsFilter = configObj["kanjiStatsFieldsFilter"]
             for noteId in aqt.mw.col.find_notes('"deck:{}"'.format(deck["name"])) :
                 note = aqt.mw.col.getNote(noteId)
-                for field in note.values() :
+                for fieldName, field in note.items() :
+                    if fieldsFilter!="*" and fieldName!=fieldsFilter : continue
                     for c in field :
                         if c in cache : continue
                         if c in rtkSet :

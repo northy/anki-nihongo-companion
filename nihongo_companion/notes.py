@@ -72,7 +72,6 @@ def update(note:notes.Note, field:str, sentences:List[Dict], entry:Dict, extraRe
         for sentence in sentences :
             off = 0
             for s,e in m.longest_matches(sentence["japanese"]) :
-                print(s,e,sentence["japanese"][s:e]) #
                 s+=off
                 e+=off
                 sentence["japanese"] = sentence["japanese"][:s]+highlight_html_begin+sentence["japanese"][s:e]+highlight_html_end+sentence["japanese"][e:]

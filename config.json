@@ -5,5 +5,6 @@
     "useEnglish": true,
     "autoSearch": false,
     "tagName": "Nihongo_Companion",
-    "defaultAppend": false
+    "defaultAppend": false,
+    "kanjiStatsFieldsFilter": "*"
 }
